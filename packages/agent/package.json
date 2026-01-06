@@ -1,0 +1,32 @@
+{
+  "name": "@contextgraph/agent",
+  "version": "0.1.0",
+  "description": "Agent policy and problem-space graphs for ContextGraph OS",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@contextgraph/core": "workspace:*",
+    "@contextgraph/storage": "workspace:*",
+    "@contextgraph/policy": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}
