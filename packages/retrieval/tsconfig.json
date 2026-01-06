@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../core" },
+    { "path": "../storage" },
+    { "path": "../ckg" },
+    { "path": "../provenance" },
+    { "path": "../policy" },
+    { "path": "../agent" }
+  ]
+}

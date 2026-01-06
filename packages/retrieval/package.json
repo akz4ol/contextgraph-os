@@ -1,0 +1,35 @@
+{
+  "name": "@contextgraph/retrieval",
+  "version": "0.1.0",
+  "description": "Retrieval and context assembly for ContextGraph OS",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@contextgraph/core": "workspace:*",
+    "@contextgraph/storage": "workspace:*",
+    "@contextgraph/ckg": "workspace:*",
+    "@contextgraph/provenance": "workspace:*",
+    "@contextgraph/policy": "workspace:*",
+    "@contextgraph/agent": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  }
+}
