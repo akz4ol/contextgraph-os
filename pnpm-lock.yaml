@@ -80,6 +80,28 @@ importers:
         specifier: ^1.6.0
         version: 1.6.1(@types/node@20.19.27)
 
+  packages/exceptions:
+    dependencies:
+      '@contextgraph/core':
+        specifier: workspace:*
+        version: link:../core
+      '@contextgraph/dtg':
+        specifier: workspace:*
+        version: link:../dtg
+      '@contextgraph/provenance':
+        specifier: workspace:*
+        version: link:../provenance
+      '@contextgraph/storage':
+        specifier: workspace:*
+        version: link:../storage
+    devDependencies:
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.27)
+
   packages/ontology:
     dependencies:
       '@contextgraph/core':
@@ -91,6 +113,22 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^1.3.0
+        version: 1.6.1(@types/node@20.19.27)
+
+  packages/policy:
+    dependencies:
+      '@contextgraph/core':
+        specifier: workspace:*
+        version: link:../core
+      '@contextgraph/storage':
+        specifier: workspace:*
+        version: link:../storage
+    devDependencies:
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
         version: 1.6.1(@types/node@20.19.27)
 
   packages/provenance:
