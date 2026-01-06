@@ -1,0 +1,33 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@contextgraph/core": ["packages/core/src"],
+      "@contextgraph/ontology": ["packages/ontology/src"],
+      "@contextgraph/ckg": ["packages/ckg/src"],
+      "@contextgraph/provenance": ["packages/provenance/src"],
+      "@contextgraph/dtg": ["packages/dtg/src"],
+      "@contextgraph/policy": ["packages/policy/src"],
+      "@contextgraph/exceptions": ["packages/exceptions/src"],
+      "@contextgraph/agent": ["packages/agent/src"],
+      "@contextgraph/retrieval": ["packages/retrieval/src"],
+      "@contextgraph/storage": ["packages/storage/src"],
+      "@contextgraph/api": ["packages/api/src"]
+    }
+  },
+  "include": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/ontology" },
+    { "path": "packages/ckg" },
+    { "path": "packages/provenance" },
+    { "path": "packages/dtg" },
+    { "path": "packages/policy" },
+    { "path": "packages/exceptions" },
+    { "path": "packages/agent" },
+    { "path": "packages/retrieval" },
+    { "path": "packages/storage" },
+    { "path": "packages/api" }
+  ]
+}

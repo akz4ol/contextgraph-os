@@ -1,0 +1,30 @@
+{
+  "name": "@contextgraph/provenance",
+  "version": "0.1.0",
+  "description": "Immutable provenance ledger for ContextGraph OS",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts"
+  },
+  "dependencies": {
+    "@contextgraph/core": "workspace:*",
+    "@contextgraph/storage": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2",
+    "vitest": "^1.6.0"
+  },
+  "files": [
+    "dist"
+  ]
+}

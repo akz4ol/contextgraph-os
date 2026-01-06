@@ -1,0 +1,19 @@
+# ContextGraph OS Code Ownership
+# Each package has designated owners responsible for review
+
+# Root configuration
+/* @contextgraph/core-maintainers
+
+# Core packages
+/packages/core/ @contextgraph/core-maintainers
+/packages/ontology/ @contextgraph/ontology-team
+/packages/ckg/ @contextgraph/graph-team
+/packages/provenance/ @contextgraph/provenance-team
+/packages/dtg/ @contextgraph/decisions-team
+/packages/policy/ @contextgraph/policy-team
+/packages/agent/ @contextgraph/agent-team
+/packages/storage/ @contextgraph/storage-team
+/packages/api/ @contextgraph/api-team
+
+# Applications
+/apps/ @contextgraph/app-maintainers
