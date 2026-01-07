@@ -64,25 +64,23 @@ This document tracks planned features and improvements for ContextGraph OS.
 - [ ] Add OpenAPI/Swagger documentation
 - [x] Write API tests (26 tests)
 
-### Webhook Support
-- [ ] Create `@contextgraph/webhooks` package
-- [ ] Implement webhook registration
-  - [ ] `POST /webhooks` - Register webhook
-  - [ ] `GET /webhooks` - List webhooks
-  - [ ] `DELETE /webhooks/:id` - Remove webhook
-- [ ] Implement webhook delivery
-  - [ ] Event queue for reliable delivery
-  - [ ] Retry logic with exponential backoff
-  - [ ] Signature verification (HMAC)
-- [ ] Supported events:
-  - [ ] `entity.created`, `entity.updated`, `entity.deleted`
-  - [ ] `claim.added`, `claim.revoked`
-  - [ ] `agent.created`, `agent.updated`
-  - [ ] `decision.proposed`, `decision.approved`, `decision.rejected`
-  - [ ] `policy.created`, `policy.updated`
-  - [ ] `execution.completed`, `execution.failed`
-- [ ] Add webhook logs and debugging
-- [ ] Write webhook tests
+### Webhook Support ✅
+- [x] Create `@contextgraph/webhooks` package
+- [x] Implement webhook registration
+  - [x] WebhookManager with CRUD operations
+  - [x] WebhookDeliveryService with queue and delivery
+- [x] Implement webhook delivery
+  - [x] Event queue for reliable delivery
+  - [x] Retry logic with exponential backoff
+  - [x] Signature verification (HMAC-SHA256)
+- [x] Supported events:
+  - [x] `entity.created`, `entity.updated`, `entity.deleted`
+  - [x] `claim.added`, `claim.revoked`
+  - [x] `agent.created`, `agent.updated`, `agent.suspended`
+  - [x] `decision.proposed`, `decision.approved`, `decision.rejected`, `decision.executed`
+  - [x] `policy.created`, `policy.updated`, `policy.archived`
+  - [x] `execution.started`, `execution.completed`, `execution.failed`
+- [x] Write webhook tests (33 tests)
 
 ### Import/Export ✅
 - [x] Add to `@contextgraph/sdk`:
