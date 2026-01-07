@@ -24,47 +24,45 @@ This document tracks planned features and improvements for ContextGraph OS.
 
 ## Phase 1: API Layer (E14)
 
-### REST API
-- [ ] Set up Express/Fastify server in `@contextgraph/api`
-- [ ] Implement entity endpoints
-  - [ ] `POST /entities` - Create entity
-  - [ ] `GET /entities` - List entities (with filtering)
-  - [ ] `GET /entities/:id` - Get entity by ID
-  - [ ] `PUT /entities/:id` - Update entity
-  - [ ] `DELETE /entities/:id` - Delete entity
-- [ ] Implement claim endpoints
-  - [ ] `POST /entities/:id/claims` - Add claim
-  - [ ] `GET /entities/:id/claims` - Get claims for entity
-  - [ ] `GET /claims/:id` - Get claim by ID
-  - [ ] `DELETE /claims/:id` - Revoke claim
-- [ ] Implement agent endpoints
-  - [ ] `POST /agents` - Create agent
-  - [ ] `GET /agents` - List agents
-  - [ ] `GET /agents/:id` - Get agent by ID
-  - [ ] `PUT /agents/:id` - Update agent
-  - [ ] `POST /agents/:id/execute` - Execute action
-- [ ] Implement decision endpoints
-  - [ ] `POST /decisions` - Record decision
-  - [ ] `GET /decisions` - List decisions (with status filter)
-  - [ ] `GET /decisions/:id` - Get decision by ID
-  - [ ] `POST /decisions/:id/approve` - Approve decision
-  - [ ] `POST /decisions/:id/reject` - Reject decision
-- [ ] Implement policy endpoints
-  - [ ] `POST /policies` - Create policy
-  - [ ] `GET /policies` - List policies
-  - [ ] `GET /policies/:id` - Get policy by ID
-  - [ ] `PUT /policies/:id` - Update policy
-  - [ ] `DELETE /policies/:id` - Archive policy
-- [ ] Implement system endpoints
-  - [ ] `GET /stats` - System statistics
-  - [ ] `GET /audit` - Audit trail
-  - [ ] `GET /provenance` - Query provenance
-  - [ ] `POST /provenance/verify` - Verify chain integrity
-- [ ] Add authentication middleware (API keys, JWT)
-- [ ] Add rate limiting
-- [ ] Add request validation (Zod schemas)
+### REST API ✅
+- [x] Set up Express server in `@contextgraph/api`
+- [x] Implement entity endpoints
+  - [x] `POST /entities` - Create entity
+  - [x] `GET /entities` - List entities (with filtering)
+  - [x] `GET /entities/:id` - Get entity by ID
+  - [x] `PUT /entities/:id` - Update entity
+  - [x] `DELETE /entities/:id` - Delete entity
+- [x] Implement claim endpoints
+  - [x] `POST /entities/:id/claims` - Add claim
+  - [x] `GET /entities/:id/claims` - Get claims for entity
+- [x] Implement agent endpoints
+  - [x] `POST /agents` - Create agent
+  - [x] `GET /agents` - List agents
+  - [x] `GET /agents/:id` - Get agent by ID
+  - [x] `POST /agents/:id/execute` - Execute action
+- [x] Implement decision endpoints
+  - [x] `POST /decisions` - Record decision
+  - [x] `GET /decisions` - List decisions (with status filter)
+  - [x] `GET /decisions/:id` - Get decision by ID
+  - [x] `POST /decisions/:id/approve` - Approve decision
+  - [x] `POST /decisions/:id/reject` - Reject decision (stub)
+- [x] Implement policy endpoints
+  - [x] `POST /policies` - Create policy
+  - [x] `GET /policies` - List policies
+  - [x] `GET /policies/:id` - Get policy by ID
+  - [x] `PUT /policies/:id` - Update policy
+  - [x] `DELETE /policies/:id` - Archive policy
+- [x] Implement system endpoints
+  - [x] `GET /health` - Health check
+  - [x] `GET /stats` - System statistics
+  - [x] `GET /audit` - Audit trail
+  - [x] `GET /provenance` - Query provenance
+  - [x] `POST /provenance/verify` - Verify chain integrity
+- [x] Add authentication middleware (API keys)
+- [x] Add rate limiting
+- [x] Add request validation (Zod schemas)
 - [ ] Add OpenAPI/Swagger documentation
-- [ ] Write API tests
+- [x] Write API tests (26 tests)
 
 ### Webhook Support
 - [ ] Create `@contextgraph/webhooks` package
