@@ -39,6 +39,16 @@ import type {
   SDKEvent,
   EventHandler,
   AuditEntry,
+  ExportOptions,
+  GraphExport,
+  EntityExport,
+  ClaimExport,
+  AgentExport,
+  DecisionExport,
+  PolicyExport,
+  ProvenanceExport,
+  ImportOptions,
+  ImportResult,
 } from './types.js';
 
 /**
@@ -752,5 +762,730 @@ export class ContextGraph {
       decisions: dtgStats.value.total,
       policies: policyStats.value.total,
     });
+  }
+
+  // ============================================================================
+  // Import/Export Operations
+  // ============================================================================
+
+  /**
+   * Export the entire graph to JSON format
+   */
+  async exportToJSON(options: ExportOptions = {}): Promise<Result<GraphExport, Error>> {
+    const includeAll = options.includeEntities === undefined &&
+      options.includeClaims === undefined &&
+      options.includeAgents === undefined &&
+      options.includeDecisions === undefined &&
+      options.includePolicies === undefined &&
+      options.includeProvenance === undefined;
+
+    const includeEntities = options.includeEntities ?? includeAll;
+    const includeClaims = options.includeClaims ?? includeAll;
+    const includeAgents = options.includeAgents ?? includeAll;
+    const includeDecisions = options.includeDecisions ?? includeAll;
+    const includePolicies = options.includePolicies ?? includeAll;
+    const includeProvenance = options.includeProvenance ?? includeAll;
+
+    const entities: EntityExport[] = [];
+    const claims: ClaimExport[] = [];
+    const agents: AgentExport[] = [];
+    const decisions: DecisionExport[] = [];
+    const policies: PolicyExport[] = [];
+    const provenance: ProvenanceExport[] = [];
+
+    // Export entities
+    if (includeEntities) {
+      const entitiesResult = await this.storage.find<{
+        id: string;
+        type: string;
+        name?: string;
+        properties: Record<string, unknown>;
+        aliases?: readonly string[];
+        createdAt: Timestamp;
+      }>('entities', {}, { limit: 10000 });
+      if (entitiesResult.ok) {
+        for (const entity of entitiesResult.value.items) {
+          if (options.since !== undefined && entity.createdAt < options.since) continue;
+          const exportEntity: EntityExport = {
+            id: entity.id,
+            type: entity.type,
+            name: entity.name ?? '',
+            properties: entity.properties,
+            createdAt: entity.createdAt,
+          };
+          if (entity.aliases !== undefined) {
+            (exportEntity as { aliases?: readonly string[] }).aliases = entity.aliases;
+          }
+          entities.push(exportEntity);
+        }
+      }
+    }
+
+    // Export claims
+    if (includeClaims) {
+      const claimsResult = await this.storage.find<{
+        id: string;
+        subjectId: string;
+        predicate: string;
+        value: unknown;
+        objectId?: string;
+        context?: Record<string, unknown>;
+        provenanceId: string;
+        createdAt: Timestamp;
+      }>('claims', {}, { limit: 10000 });
+      if (claimsResult.ok) {
+        for (const claim of claimsResult.value.items) {
+          if (options.since !== undefined && claim.createdAt < options.since) continue;
+          const exportClaim: ClaimExport = {
+            id: claim.id,
+            subjectId: claim.subjectId,
+            predicate: claim.predicate,
+            value: claim.value,
+            provenanceId: claim.provenanceId,
+            createdAt: claim.createdAt,
+          };
+          if (claim.objectId !== undefined) {
+            (exportClaim as { objectId?: string }).objectId = claim.objectId;
+          }
+          if (claim.context !== undefined) {
+            (exportClaim as { context?: Record<string, unknown> }).context = claim.context;
+          }
+          claims.push(exportClaim);
+        }
+      }
+    }
+
+    // Export agents
+    if (includeAgents) {
+      const agentsResult = await this.agentRegistry.query({ limit: 10000 });
+      if (agentsResult.ok) {
+        for (const agent of agentsResult.value) {
+          if (options.since !== undefined && agent.data.createdAt < options.since) continue;
+          const exportAgent: AgentExport = {
+            id: agent.data.id,
+            name: agent.data.name,
+            status: agent.data.status,
+            createdAt: agent.data.createdAt,
+          };
+          if (agent.data.description !== undefined) {
+            (exportAgent as { description?: string }).description = agent.data.description;
+          }
+          if (agent.data.parentAgentId !== undefined) {
+            (exportAgent as { parentAgentId?: string }).parentAgentId = agent.data.parentAgentId;
+          }
+          if (agent.data.metadata !== undefined) {
+            (exportAgent as { metadata?: Readonly<Record<string, unknown>> }).metadata = agent.data.metadata;
+          }
+          agents.push(exportAgent);
+        }
+      }
+    }
+
+    // Export decisions
+    if (includeDecisions) {
+      const decisionsResult = await this.dtg.queryDecisions({ limit: 10000 });
+      if (decisionsResult.ok) {
+        for (const decision of decisionsResult.value) {
+          if (options.since !== undefined && decision.data.createdAt < options.since) continue;
+          const exportDecision: DecisionExport = {
+            id: decision.data.id,
+            type: decision.data.type,
+            title: decision.data.title,
+            status: decision.data.status,
+            proposedBy: decision.data.proposedBy,
+            createdAt: decision.data.createdAt,
+          };
+          if (decision.data.description !== undefined) {
+            (exportDecision as { description?: string }).description = decision.data.description;
+          }
+          if (decision.data.riskLevel !== undefined) {
+            (exportDecision as { riskLevel?: string }).riskLevel = decision.data.riskLevel;
+          }
+          decisions.push(exportDecision);
+        }
+      }
+    }
+
+    // Export policies
+    if (includePolicies) {
+      const policiesResult = await this.getEffectivePolicies();
+      if (policiesResult.ok) {
+        for (const policy of policiesResult.value) {
+          if (options.since !== undefined && policy.data.createdAt < options.since) continue;
+          // Extract effect from first rule if available
+          const firstRule = policy.data.rules[0];
+          const exportPolicy: PolicyExport = {
+            id: policy.data.id,
+            name: policy.data.name,
+            version: policy.data.version,
+            effect: firstRule?.effect ?? 'deny',
+            subjects: [],
+            actions: [],
+            resources: [],
+            priority: policy.data.priority,
+            status: policy.data.status,
+            createdAt: policy.data.createdAt,
+          };
+          if (policy.data.description !== undefined) {
+            (exportPolicy as { description?: string }).description = policy.data.description;
+          }
+          if (firstRule?.conditions !== undefined && firstRule.conditions.length > 0) {
+            (exportPolicy as { conditions?: readonly { field: string; operator: string; value: unknown }[] }).conditions =
+              firstRule.conditions.map(c => ({
+                field: c.field,
+                operator: c.operator,
+                value: c.value,
+              }));
+          }
+          policies.push(exportPolicy);
+        }
+      }
+    }
+
+    // Export provenance
+    if (includeProvenance) {
+      const provenanceResult = await this.queryProvenance({ limit: 10000 });
+      if (provenanceResult.ok) {
+        for (const entry of provenanceResult.value) {
+          if (options.since !== undefined && entry.data.timestamp < options.since) continue;
+          const exportProvenance: ProvenanceExport = {
+            id: entry.data.id,
+            sourceType: entry.data.sourceType,
+            sourceId: entry.data.sourceId ?? '',
+            action: entry.data.action,
+            timestamp: entry.data.timestamp,
+            hash: entry.data.hash,
+          };
+          if (entry.data.previousHash !== undefined) {
+            (exportProvenance as { previousHash?: string }).previousHash = entry.data.previousHash;
+          }
+          provenance.push(exportProvenance);
+        }
+      }
+    }
+
+    const exportData: GraphExport = {
+      version: '1.0.0',
+      exportedAt: createTimestamp(),
+      entities,
+      claims,
+      agents,
+      decisions,
+      policies,
+      provenance,
+    };
+
+    return ok(exportData);
+  }
+
+  /**
+   * Export to JSON string
+   */
+  async exportToJSONString(options: ExportOptions = {}): Promise<Result<string, Error>> {
+    const exportResult = await this.exportToJSON(options);
+    if (!exportResult.ok) {
+      return err(exportResult.error);
+    }
+    const indent = options.prettyPrint ? 2 : undefined;
+    return ok(JSON.stringify(exportResult.value, null, indent));
+  }
+
+  /**
+   * Import from JSON format
+   */
+  async importFromJSON(data: GraphExport, options: ImportOptions = {}): Promise<Result<ImportResult, Error>> {
+    const errors: string[] = [];
+    let entitiesImported = 0;
+    let claimsImported = 0;
+    let agentsImported = 0;
+    let decisionsImported = 0;
+    let policiesImported = 0;
+    let skipped = 0;
+
+    const onConflict = options.onConflict ?? 'skip';
+    const dryRun = options.dryRun ?? false;
+
+    // Validate version
+    if (!options.skipValidation && data.version !== '1.0.0') {
+      errors.push(`Unsupported export version: ${data.version}`);
+    }
+
+    // Import entities
+    for (const entity of data.entities) {
+      if (!options.skipValidation) {
+        if (!entity.id || !entity.type || !entity.name) {
+          errors.push(`Invalid entity: missing required fields`);
+          continue;
+        }
+      }
+
+      if (dryRun) {
+        entitiesImported++;
+        continue;
+      }
+
+      // Check for existing entity
+      const existing = await this.getEntity(entity.id as EntityId);
+      if (existing.ok && existing.value !== null) {
+        if (onConflict === 'skip') {
+          skipped++;
+          continue;
+        } else if (onConflict === 'error') {
+          errors.push(`Entity already exists: ${entity.id}`);
+          continue;
+        }
+        // 'overwrite' - continue with insert (upsert)
+      }
+
+      const result = await this.storage.upsert('entities', {
+        id: entity.id,
+        type: entity.type,
+        name: entity.name,
+        properties: entity.properties ?? {},
+        aliases: entity.aliases ?? [],
+        createdAt: entity.createdAt,
+      });
+
+      if (result.ok) {
+        entitiesImported++;
+      } else {
+        errors.push(`Failed to import entity ${entity.id}: ${result.error.message}`);
+      }
+    }
+
+    // Import agents
+    for (const agent of data.agents) {
+      if (!options.skipValidation) {
+        if (!agent.id || !agent.name) {
+          errors.push(`Invalid agent: missing required fields`);
+          continue;
+        }
+      }
+
+      if (dryRun) {
+        agentsImported++;
+        continue;
+      }
+
+      const existing = await this.getAgent(agent.id);
+      if (existing.ok && existing.value !== null) {
+        if (onConflict === 'skip') {
+          skipped++;
+          continue;
+        } else if (onConflict === 'error') {
+          errors.push(`Agent already exists: ${agent.id}`);
+          continue;
+        }
+      }
+
+      const result = await this.storage.upsert('agents', {
+        id: agent.id,
+        name: agent.name,
+        status: agent.status,
+        description: agent.description,
+        parentAgentId: agent.parentAgentId,
+        metadata: agent.metadata ?? {},
+        capabilities: [],
+        problemSpaceBindings: [],
+        policyIds: [],
+        createdAt: agent.createdAt,
+        updatedAt: agent.createdAt,
+      });
+
+      if (result.ok) {
+        agentsImported++;
+      } else {
+        errors.push(`Failed to import agent ${agent.id}: ${result.error.message}`);
+      }
+    }
+
+    // Import claims (after entities to ensure subjects exist)
+    for (const claim of data.claims) {
+      if (!options.skipValidation) {
+        if (!claim.id || !claim.subjectId || !claim.predicate) {
+          errors.push(`Invalid claim: missing required fields`);
+          continue;
+        }
+      }
+
+      if (dryRun) {
+        claimsImported++;
+        continue;
+      }
+
+      const result = await this.storage.upsert('claims', {
+        id: claim.id,
+        subjectId: claim.subjectId,
+        predicate: claim.predicate,
+        value: claim.value,
+        objectId: claim.objectId,
+        context: claim.context ?? {},
+        provenanceId: claim.provenanceId,
+        status: 'active',
+        createdAt: claim.createdAt,
+      });
+
+      if (result.ok) {
+        claimsImported++;
+      } else {
+        errors.push(`Failed to import claim ${claim.id}: ${result.error.message}`);
+      }
+    }
+
+    // Import policies
+    for (const policy of data.policies) {
+      if (!options.skipValidation) {
+        if (!policy.id || !policy.name || !policy.effect) {
+          errors.push(`Invalid policy: missing required fields`);
+          continue;
+        }
+      }
+
+      if (dryRun) {
+        policiesImported++;
+        continue;
+      }
+
+      const result = await this.storage.upsert('policies', {
+        id: policy.id,
+        name: policy.name,
+        version: policy.version,
+        description: policy.description,
+        effect: policy.effect,
+        subjects: policy.subjects,
+        actions: policy.actions,
+        resources: policy.resources,
+        conditions: policy.conditions ?? [],
+        priority: policy.priority,
+        status: policy.status,
+        createdAt: policy.createdAt,
+      });
+
+      if (result.ok) {
+        policiesImported++;
+      } else {
+        errors.push(`Failed to import policy ${policy.id}: ${result.error.message}`);
+      }
+    }
+
+    // Note: Decisions and provenance are typically not imported to maintain integrity
+    // But we can import decisions if explicitly included
+    for (const decision of data.decisions) {
+      if (dryRun) {
+        decisionsImported++;
+        continue;
+      }
+
+      const result = await this.storage.upsert('decisions', {
+        id: decision.id,
+        type: decision.type,
+        title: decision.title,
+        description: decision.description,
+        status: decision.status,
+        proposedBy: decision.proposedBy,
+        riskLevel: decision.riskLevel,
+        createdAt: decision.createdAt,
+      });
+
+      if (result.ok) {
+        decisionsImported++;
+      } else {
+        errors.push(`Failed to import decision ${decision.id}: ${result.error.message}`);
+      }
+    }
+
+    return ok({
+      success: errors.length === 0,
+      entitiesImported,
+      claimsImported,
+      agentsImported,
+      decisionsImported,
+      policiesImported,
+      skipped,
+      errors,
+    });
+  }
+
+  /**
+   * Import from JSON string
+   */
+  async importFromJSONString(jsonString: string, options: ImportOptions = {}): Promise<Result<ImportResult, Error>> {
+    try {
+      const data = JSON.parse(jsonString) as GraphExport;
+      return this.importFromJSON(data, options);
+    } catch (error) {
+      return err(new Error(`Invalid JSON: ${error instanceof Error ? error.message : String(error)}`));
+    }
+  }
+
+  /**
+   * Export entities to CSV format
+   */
+  async exportEntitiesToCSV(): Promise<Result<string, Error>> {
+    const entitiesResult = await this.storage.find<{
+      id: string;
+      type: string;
+      name?: string;
+      properties: Record<string, unknown>;
+      createdAt: Timestamp;
+    }>('entities', {}, { limit: 10000 });
+    if (!entitiesResult.ok) {
+      return err(entitiesResult.error);
+    }
+
+    const headers = ['id', 'type', 'name', 'properties', 'createdAt'];
+    const rows = [headers.join(',')];
+
+    for (const entity of entitiesResult.value.items) {
+      const row = [
+        this.escapeCSV(entity.id),
+        this.escapeCSV(entity.type),
+        this.escapeCSV(entity.name ?? ''),
+        this.escapeCSV(JSON.stringify(entity.properties ?? {})),
+        this.escapeCSV(String(entity.createdAt)),
+      ];
+      rows.push(row.join(','));
+    }
+
+    return ok(rows.join('\n'));
+  }
+
+  /**
+   * Export claims to CSV format
+   */
+  async exportClaimsToCSV(): Promise<Result<string, Error>> {
+    const claimsResult = await this.storage.find<{
+      id: string;
+      subjectId: string;
+      predicate: string;
+      value: unknown;
+      objectId?: string;
+      provenanceId?: string;
+      createdAt: Timestamp;
+    }>('claims', {}, { limit: 10000 });
+
+    if (!claimsResult.ok) {
+      return err(claimsResult.error);
+    }
+
+    const headers = ['id', 'subjectId', 'predicate', 'value', 'objectId', 'provenanceId', 'createdAt'];
+    const rows = [headers.join(',')];
+
+    for (const claim of claimsResult.value.items) {
+      const row = [
+        this.escapeCSV(claim.id),
+        this.escapeCSV(claim.subjectId),
+        this.escapeCSV(claim.predicate),
+        this.escapeCSV(typeof claim.value === 'string' ? claim.value : JSON.stringify(claim.value)),
+        this.escapeCSV(claim.objectId),
+        this.escapeCSV(claim.provenanceId),
+        this.escapeCSV(String(claim.createdAt)),
+      ];
+      rows.push(row.join(','));
+    }
+
+    return ok(rows.join('\n'));
+  }
+
+  /**
+   * Import entities from CSV format
+   */
+  async importEntitiesFromCSV(csv: string, options: ImportOptions = {}): Promise<Result<ImportResult, Error>> {
+    const lines = csv.trim().split('\n');
+    if (lines.length < 2) {
+      return err(new Error('CSV must have at least a header row and one data row'));
+    }
+
+    const headers = this.parseCSVLine(lines[0]!);
+    const requiredHeaders = ['type', 'name'];
+    for (const required of requiredHeaders) {
+      if (!headers.includes(required)) {
+        return err(new Error(`Missing required header: ${required}`));
+      }
+    }
+
+    let entitiesImported = 0;
+    let skipped = 0;
+    const errors: string[] = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const values = this.parseCSVLine(lines[i]!);
+      const record: Record<string, unknown> = {};
+
+      for (let j = 0; j < headers.length; j++) {
+        record[headers[j]!] = values[j] ?? '';
+      }
+
+      if (!record['type'] || !record['name']) {
+        errors.push(`Row ${i + 1}: missing required fields`);
+        continue;
+      }
+
+      if (options.dryRun) {
+        entitiesImported++;
+        continue;
+      }
+
+      // Parse properties if provided
+      let properties: Record<string, unknown> = {};
+      if (record['properties'] && typeof record['properties'] === 'string' && record['properties'].trim()) {
+        try {
+          properties = JSON.parse(record['properties'] as string);
+        } catch {
+          // Ignore parse errors, use empty properties
+        }
+      }
+
+      const createInput: CreateEntityInput = {
+        type: record['type'] as string,
+        name: record['name'] as string,
+        properties,
+      };
+      const result = await this.createEntity(createInput);
+
+      if (result.ok) {
+        entitiesImported++;
+      } else {
+        errors.push(`Row ${i + 1}: ${result.error.message}`);
+      }
+    }
+
+    return ok({
+      success: errors.length === 0,
+      entitiesImported,
+      claimsImported: 0,
+      agentsImported: 0,
+      decisionsImported: 0,
+      policiesImported: 0,
+      skipped,
+      errors,
+    });
+  }
+
+  /**
+   * Import claims from CSV format
+   */
+  async importClaimsFromCSV(csv: string, options: ImportOptions = {}): Promise<Result<ImportResult, Error>> {
+    const lines = csv.trim().split('\n');
+    if (lines.length < 2) {
+      return err(new Error('CSV must have at least a header row and one data row'));
+    }
+
+    const headers = this.parseCSVLine(lines[0]!);
+    const requiredHeaders = ['subjectId', 'predicate', 'value'];
+    for (const required of requiredHeaders) {
+      if (!headers.includes(required)) {
+        return err(new Error(`Missing required header: ${required}`));
+      }
+    }
+
+    let claimsImported = 0;
+    let skipped = 0;
+    const errors: string[] = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const values = this.parseCSVLine(lines[i]!);
+      const record: Record<string, unknown> = {};
+
+      for (let j = 0; j < headers.length; j++) {
+        record[headers[j]!] = values[j] ?? '';
+      }
+
+      if (!record['subjectId'] || !record['predicate']) {
+        errors.push(`Row ${i + 1}: missing required fields`);
+        continue;
+      }
+
+      if (options.dryRun) {
+        claimsImported++;
+        continue;
+      }
+
+      // Try to parse value as JSON, otherwise use as string
+      let value: unknown = record['value'];
+      if (typeof value === 'string' && value.trim()) {
+        try {
+          value = JSON.parse(value);
+        } catch {
+          // Keep as string
+        }
+      }
+
+      const claimInput: CreateClaimInput = {
+        subjectId: record['subjectId'] as EntityId,
+        predicate: record['predicate'] as string,
+        value,
+      };
+      if (record['objectId'] && typeof record['objectId'] === 'string' && record['objectId'].trim()) {
+        (claimInput as { objectId?: EntityId }).objectId = record['objectId'] as EntityId;
+      }
+      const result = await this.addClaim(claimInput);
+
+      if (result.ok) {
+        claimsImported++;
+      } else {
+        errors.push(`Row ${i + 1}: ${result.error.message}`);
+      }
+    }
+
+    return ok({
+      success: errors.length === 0,
+      entitiesImported: 0,
+      claimsImported,
+      agentsImported: 0,
+      decisionsImported: 0,
+      policiesImported: 0,
+      skipped,
+      errors,
+    });
+  }
+
+  /**
+   * Escape a value for CSV
+   */
+  private escapeCSV(value: string | undefined | null): string {
+    const str = value ?? '';
+    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  }
+
+  /**
+   * Parse a CSV line into values
+   */
+  private parseCSVLine(line: string): string[] {
+    const values: string[] = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i]!;
+
+      if (inQuotes) {
+        if (char === '"') {
+          if (line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = false;
+          }
+        } else {
+          current += char;
+        }
+      } else {
+        if (char === '"') {
+          inQuotes = true;
+        } else if (char === ',') {
+          values.push(current);
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+    }
+    values.push(current);
+
+    return values;
   }
 }

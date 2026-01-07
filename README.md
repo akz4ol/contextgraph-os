@@ -193,6 +193,8 @@ npx contextgraph verify
 | `provenance` | Query provenance entries |
 | `verify` | Verify provenance chain integrity |
 | `context <id>` | Assemble context for an entity |
+| `export` | Export graph data (JSON or CSV) |
+| `import <file>` | Import graph data (JSON or CSV) |
 | `repl` | Start interactive REPL |
 
 ### Using the REST API
@@ -348,6 +350,50 @@ const result = await client.execute({
 
 // Get audit trail
 const audit = await client.getAuditTrail({ limit: 20 });
+```
+
+### Import/Export
+
+Export and import graph data for backup or migration:
+
+```typescript
+// Export full graph to JSON
+const exportResult = await client.exportToJSON();
+const jsonString = await client.exportToJSONString({ prettyPrint: true });
+
+// Export to CSV
+const entitiesCSV = await client.exportEntitiesToCSV();
+const claimsCSV = await client.exportClaimsToCSV();
+
+// Import from JSON
+await client.importFromJSON(exportData, {
+  dryRun: true,        // Validate without importing
+  merge: true,         // Merge with existing data
+  onConflict: 'skip',  // skip | overwrite | error
+});
+
+// Import from CSV
+await client.importEntitiesFromCSV(csvString, { dryRun: false });
+await client.importClaimsFromCSV(csvString);
+```
+
+**CLI Export/Import:**
+
+```bash
+# Export full graph to JSON
+npx contextgraph export --format json --output backup.json --pretty
+
+# Export entities to CSV
+npx contextgraph export --format csv --type entities --output entities.csv
+
+# Import from JSON
+npx contextgraph import backup.json
+
+# Import entities from CSV (dry run first)
+npx contextgraph import entities.csv --format csv --type entities --dry-run
+
+# Import with merge and conflict handling
+npx contextgraph import backup.json --merge --on-conflict skip
 ```
 
 ### Event System
@@ -558,7 +604,7 @@ pnpm --filter @contextgraph/sdk test
 pnpm --filter @contextgraph/demos test
 ```
 
-**Test Coverage:** 324 tests across 15 packages
+**Test Coverage:** 336 tests across 15 packages
 
 ## Project Status
 
@@ -578,6 +624,7 @@ pnpm --filter @contextgraph/demos test
 | E11 | ✅ | CLI and inspection tools |
 | E12-13 | ✅ | Demos and integration testing |
 | E14 | ✅ | REST API layer |
+| E14b | ✅ | Import/Export functionality |
 
 ## License
 

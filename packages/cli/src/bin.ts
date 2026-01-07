@@ -5,6 +5,7 @@
  * Command-line interface for ContextGraph OS.
  */
 
+import * as fs from 'node:fs/promises';
 import { ContextGraph } from '@contextgraph/sdk';
 import { ContextGraphRepl, GraphInspector } from './index.js';
 
@@ -70,6 +71,8 @@ Commands:
   provenance         Query provenance entries
   verify             Verify provenance chain
   context <id>       Assemble context for an entity
+  export             Export graph data
+  import <file>      Import graph data
   repl               Start interactive REPL
 
 Options:
@@ -79,11 +82,28 @@ Options:
   --no-color         Disable colored output
   --limit N          Limit number of results
 
+Export Options:
+  --format <type>    Export format: json, csv (default: json)
+  --output <file>    Output file (default: stdout)
+  --type <resource>  Resource type for CSV: entities, claims (default: entities)
+  --pretty           Pretty print JSON output
+
+Import Options:
+  --format <type>    Import format: json, csv (default: json)
+  --type <resource>  Resource type for CSV: entities, claims (default: entities)
+  --dry-run          Validate without importing
+  --merge            Merge with existing data
+  --on-conflict      Conflict handling: skip, overwrite, error (default: skip)
+
 Examples:
   contextgraph stats
   contextgraph entities person --limit 10
   contextgraph entity ent_123456
   contextgraph audit --json
+  contextgraph export --format json --output backup.json
+  contextgraph export --format csv --type entities --output entities.csv
+  contextgraph import backup.json
+  contextgraph import data.csv --format csv --type entities
   contextgraph repl
 `);
 }
@@ -221,6 +241,130 @@ async function main(): Promise<void> {
       }
       result = await inspector.inspectContext(positional[0]!);
       break;
+
+    case 'export': {
+      const format = (options.get('format') as string) ?? 'json';
+      const outputFile = options.get('output') as string | undefined;
+      const resourceType = (options.get('type') as string) ?? 'entities';
+      const prettyPrint = options.has('pretty');
+
+      let output: string;
+
+      if (format === 'json') {
+        const exportResult = await client.exportToJSONString({ prettyPrint });
+        if (!exportResult.ok) {
+          console.error(`Export failed: ${exportResult.error.message}`);
+          process.exit(1);
+        }
+        output = exportResult.value;
+      } else if (format === 'csv') {
+        if (resourceType === 'entities') {
+          const exportResult = await client.exportEntitiesToCSV();
+          if (!exportResult.ok) {
+            console.error(`Export failed: ${exportResult.error.message}`);
+            process.exit(1);
+          }
+          output = exportResult.value;
+        } else if (resourceType === 'claims') {
+          const exportResult = await client.exportClaimsToCSV();
+          if (!exportResult.ok) {
+            console.error(`Export failed: ${exportResult.error.message}`);
+            process.exit(1);
+          }
+          output = exportResult.value;
+        } else {
+          console.error(`Unknown resource type: ${resourceType}. Use 'entities' or 'claims'.`);
+          process.exit(1);
+        }
+      } else {
+        console.error(`Unknown format: ${format}. Use 'json' or 'csv'.`);
+        process.exit(1);
+      }
+
+      if (outputFile !== undefined) {
+        await fs.writeFile(outputFile, output, 'utf-8');
+        result = { success: true, output: `Exported to ${outputFile}` };
+      } else {
+        console.log(output);
+        result = { success: true, output: '' };
+      }
+      break;
+    }
+
+    case 'import': {
+      const inputFile = positional[0];
+      if (inputFile === undefined) {
+        console.error('Input file required');
+        process.exit(1);
+      }
+
+      const format = (options.get('format') as string) ?? 'json';
+      const resourceType = (options.get('type') as string) ?? 'entities';
+      const dryRun = options.has('dry-run');
+      const merge = options.has('merge');
+      const onConflict = (options.get('on-conflict') as 'skip' | 'overwrite' | 'error') ?? 'skip';
+
+      let content: string;
+      try {
+        content = await fs.readFile(inputFile, 'utf-8');
+      } catch (error) {
+        console.error(`Failed to read file: ${error instanceof Error ? error.message : String(error)}`);
+        process.exit(1);
+      }
+
+      if (format === 'json') {
+        const importResult = await client.importFromJSONString(content, { dryRun, merge, onConflict });
+        if (!importResult.ok) {
+          console.error(`Import failed: ${importResult.error.message}`);
+          process.exit(1);
+        }
+        const r = importResult.value;
+        result = {
+          success: r.success,
+          output: dryRun
+            ? `Dry run: Would import ${r.entitiesImported} entities, ${r.claimsImported} claims, ${r.agentsImported} agents, ${r.decisionsImported} decisions, ${r.policiesImported} policies`
+            : `Imported ${r.entitiesImported} entities, ${r.claimsImported} claims, ${r.agentsImported} agents, ${r.decisionsImported} decisions, ${r.policiesImported} policies`,
+          data: r,
+        };
+      } else if (format === 'csv') {
+        if (resourceType === 'entities') {
+          const importResult = await client.importEntitiesFromCSV(content, { dryRun, merge, onConflict });
+          if (!importResult.ok) {
+            console.error(`Import failed: ${importResult.error.message}`);
+            process.exit(1);
+          }
+          const r = importResult.value;
+          result = {
+            success: r.success,
+            output: dryRun
+              ? `Dry run: Would import ${r.entitiesImported} entities`
+              : `Imported ${r.entitiesImported} entities`,
+            data: r,
+          };
+        } else if (resourceType === 'claims') {
+          const importResult = await client.importClaimsFromCSV(content, { dryRun, merge, onConflict });
+          if (!importResult.ok) {
+            console.error(`Import failed: ${importResult.error.message}`);
+            process.exit(1);
+          }
+          const r = importResult.value;
+          result = {
+            success: r.success,
+            output: dryRun
+              ? `Dry run: Would import ${r.claimsImported} claims`
+              : `Imported ${r.claimsImported} claims`,
+            data: r,
+          };
+        } else {
+          console.error(`Unknown resource type: ${resourceType}. Use 'entities' or 'claims'.`);
+          process.exit(1);
+        }
+      } else {
+        console.error(`Unknown format: ${format}. Use 'json' or 'csv'.`);
+        process.exit(1);
+      }
+      break;
+    }
 
     default:
       console.error(`Unknown command: ${command}`);

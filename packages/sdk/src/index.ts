@@ -20,6 +20,18 @@ export type {
   SDKEvent,
   EventHandler,
   AuditEntry,
+  // Import/Export types
+  ExportFormat,
+  ExportOptions,
+  GraphExport,
+  EntityExport,
+  ClaimExport,
+  AgentExport,
+  DecisionExport,
+  PolicyExport,
+  ProvenanceExport,
+  ImportOptions,
+  ImportResult,
 } from './types.js';
 
 // Re-export commonly used types from core packages

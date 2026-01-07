@@ -84,22 +84,22 @@ This document tracks planned features and improvements for ContextGraph OS.
 - [ ] Add webhook logs and debugging
 - [ ] Write webhook tests
 
-### Import/Export
-- [ ] Add to `@contextgraph/sdk`:
-  - [ ] `exportToJSON()` - Full graph export
-  - [ ] `importFromJSON()` - Full graph import
-  - [ ] `exportEntities()` - Export entities to CSV
-  - [ ] `importEntities()` - Import entities from CSV
-  - [ ] `exportClaims()` - Export claims to CSV
-  - [ ] `importClaims()` - Import claims from CSV
-- [ ] Add CLI commands:
-  - [ ] `contextgraph export --format json --output backup.json`
-  - [ ] `contextgraph import --format json --input backup.json`
-  - [ ] `contextgraph export entities --format csv`
-  - [ ] `contextgraph import entities --format csv`
-- [ ] Support incremental exports (since timestamp)
-- [ ] Validate imports before applying
-- [ ] Write import/export tests
+### Import/Export ✅
+- [x] Add to `@contextgraph/sdk`:
+  - [x] `exportToJSON()` - Full graph export
+  - [x] `importFromJSON()` - Full graph import
+  - [x] `exportEntitiesToCSV()` - Export entities to CSV
+  - [x] `importEntitiesFromCSV()` - Import entities from CSV
+  - [x] `exportClaimsToCSV()` - Export claims to CSV
+  - [x] `importClaimsFromCSV()` - Import claims from CSV
+- [x] Add CLI commands:
+  - [x] `contextgraph export --format json --output backup.json`
+  - [x] `contextgraph import backup.json --format json`
+  - [x] `contextgraph export --format csv --type entities`
+  - [x] `contextgraph import data.csv --format csv --type entities`
+- [x] Support incremental exports (since timestamp)
+- [x] Validate imports before applying (dry-run option)
+- [x] Write import/export tests (12 tests)
 
 ---
 

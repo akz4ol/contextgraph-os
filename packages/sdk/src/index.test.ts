@@ -529,4 +529,204 @@ describe('ContextGraph SDK', () => {
       expect(storage).toBeDefined();
     });
   });
+
+  describe('Import/Export Operations', () => {
+    it('exports to JSON', async () => {
+      // Create some data
+      await client.createEntity({ type: 'person', name: 'Export Test' });
+
+      const result = await client.exportToJSON();
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.version).toBe('1.0.0');
+        expect(result.value.exportedAt).toBeDefined();
+        expect(Array.isArray(result.value.entities)).toBe(true);
+        expect(result.value.entities.length).toBeGreaterThan(0);
+      }
+    });
+
+    it('exports to JSON string', async () => {
+      await client.createEntity({ type: 'person', name: 'String Export' });
+
+      const result = await client.exportToJSONString({ prettyPrint: true });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        const parsed = JSON.parse(result.value);
+        expect(parsed.version).toBe('1.0.0');
+      }
+    });
+
+    it('exports with filtering options', async () => {
+      const result = await client.exportToJSON({
+        includeEntities: true,
+        includeClaims: false,
+        includeAgents: false,
+        includeDecisions: false,
+        includePolicies: false,
+        includeProvenance: false,
+      });
+
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.entities.length).toBeGreaterThanOrEqual(0);
+        expect(result.value.claims.length).toBe(0);
+        expect(result.value.agents.length).toBe(0);
+      }
+    });
+
+    it('imports from JSON', async () => {
+      const exportData = {
+        version: '1.0.0',
+        exportedAt: Date.now(),
+        entities: [{
+          id: 'ent_import_test',
+          type: 'test',
+          name: 'Imported Entity',
+          properties: { imported: true },
+          createdAt: Date.now(),
+        }],
+        claims: [],
+        agents: [],
+        decisions: [],
+        policies: [],
+        provenance: [],
+      };
+
+      const result = await client.importFromJSON(exportData as any);
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.success).toBe(true);
+        expect(result.value.entitiesImported).toBe(1);
+      }
+    });
+
+    it('imports from JSON string', async () => {
+      const exportData = {
+        version: '1.0.0',
+        exportedAt: Date.now(),
+        entities: [{
+          id: 'ent_string_import_test',
+          type: 'test',
+          name: 'String Imported',
+          properties: {},
+          createdAt: Date.now(),
+        }],
+        claims: [],
+        agents: [],
+        decisions: [],
+        policies: [],
+        provenance: [],
+      };
+
+      const result = await client.importFromJSONString(JSON.stringify(exportData));
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.success).toBe(true);
+      }
+    });
+
+    it('dry run import validates without importing', async () => {
+      const exportData = {
+        version: '1.0.0',
+        exportedAt: Date.now(),
+        entities: [{
+          id: 'ent_dry_run',
+          type: 'test',
+          name: 'Dry Run Entity',
+          properties: {},
+          createdAt: Date.now(),
+        }],
+        claims: [],
+        agents: [],
+        decisions: [],
+        policies: [],
+        provenance: [],
+      };
+
+      const result = await client.importFromJSON(exportData as any, { dryRun: true });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.entitiesImported).toBe(1);
+      }
+
+      // Verify entity was not actually created
+      const entity = await client.getEntity('ent_dry_run' as any);
+      expect(entity.ok).toBe(true);
+      if (entity.ok) {
+        expect(entity.value).toBeNull();
+      }
+    });
+
+    it('exports entities to CSV', async () => {
+      await client.createEntity({ type: 'csv_test', name: 'CSV Export Test' });
+
+      const result = await client.exportEntitiesToCSV();
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value).toContain('id,type,name');
+        expect(result.value.split('\n').length).toBeGreaterThan(1);
+      }
+    });
+
+    it('exports claims to CSV', async () => {
+      const entity = await client.createEntity({ type: 'csv_claim', name: 'CSV Claim Test' });
+      if (!entity.ok) return;
+
+      await client.addClaim({
+        subjectId: entity.value.data.id,
+        predicate: 'test_predicate',
+        value: 'test_value',
+      });
+
+      const result = await client.exportClaimsToCSV();
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value).toContain('id,subjectId,predicate');
+        expect(result.value).toContain('test_predicate');
+      }
+    });
+
+    it('imports entities from CSV', async () => {
+      const csv = `type,name,properties
+person,CSV Import Person,"{}"
+company,CSV Import Company,"{}"`;
+
+      const result = await client.importEntitiesFromCSV(csv);
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.entitiesImported).toBe(2);
+      }
+    });
+
+    it('handles import conflicts with skip option', async () => {
+      // Create an entity first
+      const entity = await client.createEntity({ type: 'conflict', name: 'Original' });
+      if (!entity.ok) return;
+
+      // Try to import with same entity
+      const exportData = {
+        version: '1.0.0',
+        exportedAt: Date.now(),
+        entities: [{
+          id: entity.value.data.id,
+          type: 'conflict',
+          name: 'Conflicting',
+          properties: {},
+          createdAt: Date.now(),
+        }],
+        claims: [],
+        agents: [],
+        decisions: [],
+        policies: [],
+        provenance: [],
+      };
+
+      const result = await client.importFromJSON(exportData as any, { onConflict: 'skip' });
+      expect(result.ok).toBe(true);
+      if (result.ok) {
+        expect(result.value.skipped).toBe(1);
+        expect(result.value.entitiesImported).toBe(0);
+      }
+    });
+  });
 });
