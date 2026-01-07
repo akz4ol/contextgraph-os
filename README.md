@@ -20,10 +20,15 @@ ContextGraph OS provides the foundational infrastructure for building AI agent s
 ┌─────────────────────────────────────────────────────────────────┐
 │                        ContextGraph OS                          │
 ├─────────────────────────────────────────────────────────────────┤
-│  SDK & CLI Layer                                                │
+│  API & Interface Layer                                          │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
-│  │     SDK     │  │     CLI     │  │    Demos    │             │
+│  │  REST API   │  │     CLI     │  │    Demos    │             │
 │  └─────────────┘  └─────────────┘  └─────────────┘             │
+├─────────────────────────────────────────────────────────────────┤
+│  SDK Layer                                                      │
+│  ┌─────────────────────────────────────────────────┐           │
+│  │                      SDK                         │           │
+│  └─────────────────────────────────────────────────┘           │
 ├─────────────────────────────────────────────────────────────────┤
 │  Execution Layer                                                │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
@@ -68,6 +73,7 @@ ContextGraph OS provides the foundational infrastructure for building AI agent s
 | `@contextgraph/retrieval` | Context assembly with temporal and scope filtering |
 | `@contextgraph/execution` | Agent execution framework with policy enforcement |
 | `@contextgraph/sdk` | Unified high-level SDK for ContextGraph OS |
+| `@contextgraph/api` | REST API server with Express, authentication, and rate limiting |
 | `@contextgraph/cli` | CLI tools, formatters, inspector, and interactive REPL |
 | `@contextgraph/demos` | Demo examples and integration tests |
 
@@ -188,6 +194,74 @@ npx contextgraph verify
 | `verify` | Verify provenance chain integrity |
 | `context <id>` | Assemble context for an entity |
 | `repl` | Start interactive REPL |
+
+### Using the REST API
+
+Start the API server:
+
+```bash
+# Start the server (default port 3000)
+npx contextgraph-api
+
+# Or with custom configuration
+PORT=8080 API_KEY=your-secret-key npx contextgraph-api
+```
+
+**API Endpoints:**
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/v1/health` | GET | Health check |
+| `/api/v1/stats` | GET | System statistics |
+| `/api/v1/entities` | GET, POST | List/create entities |
+| `/api/v1/entities/:id` | GET, PUT, DELETE | Entity CRUD |
+| `/api/v1/entities/:id/claims` | GET, POST | Entity claims |
+| `/api/v1/agents` | GET, POST | List/create agents |
+| `/api/v1/agents/:id` | GET | Get agent by ID or name |
+| `/api/v1/agents/:id/execute` | POST | Execute agent action |
+| `/api/v1/decisions` | GET, POST | List/create decisions |
+| `/api/v1/decisions/:id/approve` | POST | Approve decision |
+| `/api/v1/decisions/:id/reject` | POST | Reject decision |
+| `/api/v1/policies` | GET, POST | List/create policies |
+| `/api/v1/audit` | GET | Query audit trail |
+| `/api/v1/provenance` | GET | Query provenance |
+| `/api/v1/provenance/verify` | POST | Verify chain integrity |
+
+**Example API Usage:**
+
+```bash
+# Create an entity
+curl -X POST http://localhost:3000/api/v1/entities \
+  -H "Content-Type: application/json" \
+  -d '{"type": "person", "name": "Alice", "properties": {"role": "engineer"}}'
+
+# List entities
+curl http://localhost:3000/api/v1/entities?type=person&limit=10
+
+# Add a claim
+curl -X POST http://localhost:3000/api/v1/entities/ent_xxx/claims \
+  -H "Content-Type: application/json" \
+  -d '{"predicate": "has_skill", "value": "TypeScript"}'
+
+# Check system health
+curl http://localhost:3000/api/v1/health
+
+# Verify provenance chain
+curl -X POST http://localhost:3000/api/v1/provenance/verify
+```
+
+**Authentication:**
+
+Set the `API_KEY` environment variable to enable API key authentication:
+
+```bash
+API_KEY=your-secret-key npx contextgraph-api
+```
+
+Then include the key in requests:
+```bash
+curl -H "X-API-Key: your-secret-key" http://localhost:3000/api/v1/entities
+```
 
 ## Key Concepts
 
@@ -484,7 +558,7 @@ pnpm --filter @contextgraph/sdk test
 pnpm --filter @contextgraph/demos test
 ```
 
-**Test Coverage:** 318 tests across 14 packages
+**Test Coverage:** 324 tests across 15 packages
 
 ## Project Status
 
@@ -503,6 +577,7 @@ pnpm --filter @contextgraph/demos test
 | E10 | ✅ | APIs and SDKs |
 | E11 | ✅ | CLI and inspection tools |
 | E12-13 | ✅ | Demos and integration testing |
+| E14 | ✅ | REST API layer |
 
 ## License
 
