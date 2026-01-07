@@ -1,0 +1,23 @@
+{
+  "name": "@contextgraph/demos",
+  "version": "0.1.0",
+  "description": "Demo examples for ContextGraph OS",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "demo:basic": "node --loader ts-node/esm src/basic-usage.ts",
+    "demo:agent": "node --loader ts-node/esm src/agent-workflow.ts"
+  },
+  "dependencies": {
+    "@contextgraph/sdk": "workspace:*",
+    "@contextgraph/cli": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "ts-node": "^10.0.0"
+  }
+}

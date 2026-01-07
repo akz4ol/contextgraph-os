@@ -1,0 +1,23 @@
+{
+  "name": "@contextgraph/cli",
+  "version": "0.1.0",
+  "description": "CLI and inspection tools for ContextGraph OS",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "contextgraph": "dist/bin.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@contextgraph/sdk": "workspace:*",
+    "@contextgraph/core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  }
+}

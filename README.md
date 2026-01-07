@@ -20,6 +20,11 @@ ContextGraph OS provides the foundational infrastructure for building AI agent s
 ┌─────────────────────────────────────────────────────────────────┐
 │                        ContextGraph OS                          │
 ├─────────────────────────────────────────────────────────────────┤
+│  SDK & CLI Layer                                                │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
+│  │     SDK     │  │     CLI     │  │    Demos    │             │
+│  └─────────────┘  └─────────────┘  └─────────────┘             │
+├─────────────────────────────────────────────────────────────────┤
 │  Execution Layer                                                │
 │  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐             │
 │  │  Executor   │  │  Handlers   │  │  Workflows  │             │
@@ -62,6 +67,9 @@ ContextGraph OS provides the foundational infrastructure for building AI agent s
 | `@contextgraph/agent` | Agent registry, capabilities, and problem-space graphs |
 | `@contextgraph/retrieval` | Context assembly with temporal and scope filtering |
 | `@contextgraph/execution` | Agent execution framework with policy enforcement |
+| `@contextgraph/sdk` | Unified high-level SDK for ContextGraph OS |
+| `@contextgraph/cli` | CLI tools, formatters, inspector, and interactive REPL |
+| `@contextgraph/demos` | Demo examples and integration tests |
 
 ## Installation
 
@@ -82,47 +90,104 @@ pnpm -r test
 
 ## Quick Start
 
+### Using the SDK (Recommended)
+
 ```typescript
-import { InMemoryStorage } from '@contextgraph/storage';
-import { CKG } from '@contextgraph/ckg';
-import { ProvenanceLedger } from '@contextgraph/provenance';
-import { AgentRegistry } from '@contextgraph/agent';
-import { Executor } from '@contextgraph/execution';
+import { ContextGraph, createScope, createConfidence } from '@contextgraph/sdk';
 
-// Initialize storage
-const storage = new InMemoryStorage();
-await storage.initialize();
+// Create a client
+const result = await ContextGraph.create();
+if (!result.ok) throw result.error;
+const client = result.value;
 
-// Create core components
-const provenance = new ProvenanceLedger(storage);
-await provenance.initialize();
+// Create an entity
+const person = await client.createEntity({
+  type: 'person',
+  name: 'Alice',
+  properties: { department: 'Engineering' },
+});
 
-const ckg = new CKG(storage, provenance);
-const agentRegistry = new AgentRegistry(storage);
+// Add claims with provenance (automatically tracked)
+await client.addClaim({
+  subjectId: person.value.data.id,
+  predicate: 'has_skill',
+  value: 'TypeScript',
+  context: {
+    scope: createScope('work'),
+    confidence: createConfidence(0.95),
+  },
+});
+
+// Query claims
+const claims = await client.getClaims(person.value.data.id);
 
 // Create an agent
-const agent = await agentRegistry.create({
-  name: 'Research Assistant',
-  type: 'assistant',
+const agent = await client.createAgent({
+  name: 'assistant',
+  description: 'Research assistant agent',
 });
 
-// Create an entity in the knowledge graph
-const entity = await ckg.createEntity({
-  type: 'document',
-  name: 'Project Report',
-  sourceType: 'user',
-  sourceId: 'user_123',
+// Register action handlers
+client.registerHandler('read', 'document', async (action) => {
+  return ok({ content: 'document content' });
 });
 
-// Add a claim with provenance
-const claim = await ckg.addClaim({
-  subjectId: entity.value.data.id,
-  predicate: 'status',
-  value: 'draft',
-  sourceType: 'agent',
-  sourceId: agent.value.data.id,
+// Execute actions
+const execution = await client.execute({
+  agentId: agent.value.data.id,
+  action: 'read',
+  resourceType: 'document',
+  resourceId: 'doc_123',
 });
+
+// Record decisions with audit trail
+const decision = await client.recordDecision({
+  type: 'workflow_step',
+  title: 'Deploy to production',
+  proposedBy: agent.value.data.id,
+  riskLevel: 'medium',
+});
+
+// Verify provenance chain integrity
+const verification = await client.verifyProvenance();
+console.log(`Chain valid: ${verification.value.valid}`);
+
+// Get system statistics
+const stats = await client.getStats();
+console.log(`Entities: ${stats.value.entities}, Claims: ${stats.value.claims}`);
 ```
+
+### Using the CLI
+
+```bash
+# Start interactive REPL
+npx contextgraph repl
+
+# Or use individual commands
+npx contextgraph stats
+npx contextgraph entities person --limit 10
+npx contextgraph entity <id> --with-claims
+npx contextgraph agents
+npx contextgraph audit --json
+npx contextgraph verify
+```
+
+### CLI Commands
+
+| Command | Description |
+|---------|-------------|
+| `stats` | Show system statistics |
+| `entities [type]` | List entities |
+| `entity <id>` | Inspect an entity |
+| `agents` | List active agents |
+| `agent <id\|name>` | Inspect an agent |
+| `decisions` | List pending decisions |
+| `policies` | List effective policies |
+| `audit` | Show audit trail |
+| `provenance` | Query provenance entries |
+| `verify` | Verify provenance chain integrity |
+| `context <id>` | Assemble context for an entity |
+| `repl` | Start interactive REPL |
 
 ## Key Concepts
 
@@ -131,17 +196,17 @@ const claim = await ckg.addClaim({
 The CKG stores entities and claims with full temporal context:
 
 ```typescript
-// Claims have temporal validity
-const claim = await ckg.addClaim({
+// Claims have temporal validity and provenance
+const claim = await client.addClaim({
   subjectId: entityId,
   predicate: 'temperature',
   value: 72,
-  sourceType: 'sensor',
-  sourceId: 'sensor_001',
   context: {
-    temporal: { start: now, end: null },
-    jurisdiction: 'us-east',
-    confidence: 0.95,
+    scope: createScope('building-a'),
+    jurisdiction: createJurisdiction('us-east'),
+    confidence: createConfidence(0.95),
+    validFrom: createTimestamp(),
+    validUntil: null, // Currently valid
   },
 });
 ```
@@ -151,16 +216,19 @@ const claim = await ckg.addClaim({
 Track every decision with full audit trail:
 
 ```typescript
-const decision = await dtg.recordDecision({
+// Record a decision
+const decision = await client.recordDecision({
   type: 'claim_creation',
   title: 'Create user profile',
   proposedBy: agentId,
   riskLevel: 'low',
 });
 
-// Approve and execute
-await dtg.approveDecision(decision.data.id, approverId);
-await dtg.executeDecision(decision.data.id, outcome);
+// Get pending decisions
+const pending = await client.getPendingDecisions();
+
+// Approve a decision
+await client.approveDecision(decision.value.data.id, approverId);
 ```
 
 ### Policy Enforcement
@@ -168,16 +236,18 @@ await dtg.executeDecision(decision.data.id, outcome);
 Define policies with deny-takes-precedence semantics:
 
 ```typescript
-await policyLedger.create({
+await client.createPolicy({
   name: 'Restrict PII Access',
   version: '1.0.0',
-  rules: [{
-    effect: 'deny',
-    conditions: [{
-      field: 'resource.type',
-      operator: 'equals',
-      value: 'pii',
-    }],
+  description: 'Deny access to PII data',
+  effect: 'deny',
+  subjects: ['*'],
+  actions: ['read', 'write'],
+  resources: ['pii/*'],
+  conditions: [{
+    field: 'agent.clearance',
+    operator: 'less_than',
+    value: 'secret',
   }],
   priority: 100,
 });
@@ -188,23 +258,44 @@ await policyLedger.create({
 Execute actions with full policy and capability enforcement:
 
 ```typescript
-const executor = new Executor({
-  storage,
-  agentRegistry,
-  capabilityRegistry,
-  policyLedger,
-  decisionGraph,
-  provenanceLedger,
+// Register a custom handler
+client.registerHandler('execute', 'data_processing', async (action, context) => {
+  // Process data...
+  return ok({ processed: true, count: 42 });
 });
 
-const result = await executor.execute({
+// Execute with audit trail
+const result = await client.execute({
   agentId: agent.data.id,
-  action: {
-    type: 'read',
-    resourceType: 'document',
-    resourceId: 'doc_123',
-  },
+  action: 'execute',
+  resourceType: 'data_processing',
+  parameters: { input: '/data/input.json' },
 });
+
+// Get audit trail
+const audit = await client.getAuditTrail({ limit: 20 });
+```
+
+### Event System
+
+Subscribe to SDK events:
+
+```typescript
+// Subscribe to events
+client.on('entity:created', (event) => {
+  console.log('Entity created:', event.data);
+});
+
+client.on('claim:added', (event) => {
+  console.log('Claim added:', event.data);
+});
+
+client.on('decision:approved', (event) => {
+  console.log('Decision approved:', event.data);
+});
+
+// Unsubscribe
+client.off('entity:created', handler);
 ```
 
 ## Testing
@@ -216,10 +307,13 @@ The project includes comprehensive tests for all packages:
 pnpm -r test
 
 # Run tests for a specific package
-cd packages/execution && pnpm test
+pnpm --filter @contextgraph/sdk test
+
+# Run demos
+pnpm --filter @contextgraph/demos test
 ```
 
-**Test Coverage**: 286 tests across 11 packages
+**Test Coverage**: 318 tests across 14 packages
 
 ## Project Status
 
@@ -235,9 +329,9 @@ cd packages/execution && pnpm test
 | E7 | ✅ | Agent and problem-space graphs |
 | E8 | ✅ | Retrieval and context assembly |
 | E9 | ✅ | Agent execution framework |
-| E10 | 🔲 | APIs and SDKs |
-| E11 | 🔲 | UI and inspection tools |
-| E12-13 | 🔲 | Demos and testing |
+| E10 | ✅ | APIs and SDKs |
+| E11 | ✅ | CLI and inspection tools |
+| E12-13 | ✅ | Demos and integration testing |
 
 ## License
 
