@@ -103,25 +103,28 @@ This document tracks planned features and improvements for ContextGraph OS.
 
 ## Phase 2: Enterprise Features (E15)
 
-### Role-Based Access Control (RBAC)
-- [ ] Create `@contextgraph/rbac` package
-- [ ] Define built-in roles:
-  - [ ] `admin` - Full system access
-  - [ ] `operator` - Manage agents and policies
-  - [ ] `analyst` - Read-only access + queries
-  - [ ] `agent` - Execute actions only
-  - [ ] `auditor` - Read audit trails and provenance
-- [ ] Implement role management:
-  - [ ] `createRole(name, permissions)`
-  - [ ] `assignRole(subjectId, roleId)`
-  - [ ] `revokeRole(subjectId, roleId)`
-  - [ ] `getRoles(subjectId)`
-- [ ] Implement permission checking:
-  - [ ] `hasPermission(subjectId, action, resource)`
-  - [ ] Integrate with policy engine
-- [ ] Add role inheritance (role hierarchies)
-- [ ] Add resource-level permissions
-- [ ] Write RBAC tests
+### Role-Based Access Control (RBAC) ✅
+- [x] Create `@contextgraph/rbac` package
+- [x] Define built-in roles:
+  - [x] `admin` - Full system access
+  - [x] `operator` - Manage agents and policies
+  - [x] `analyst` - Read-only access + queries
+  - [x] `agent` - Execute actions only
+  - [x] `auditor` - Read audit trails and provenance
+- [x] Implement role management:
+  - [x] `createRole(name, permissions)` - Create custom roles
+  - [x] `assignRole(subjectId, roleId)` - Assign role to subject
+  - [x] `revokeRole(subjectId, roleId)` - Revoke role from subject
+  - [x] `getRoles(subjectId)` - Get all roles for subject
+- [x] Implement permission checking:
+  - [x] `hasPermission(subjectId, action, resource)` - Check permission
+  - [x] Condition-based permissions (equals, not_equals, in, not_in, contains)
+  - [x] Nested attribute path support (e.g., `metadata.type`)
+- [x] Add role inheritance (role hierarchies via parentRoleId)
+- [x] Add resource-level permissions (resourceId support with wildcards)
+- [x] Add scoped permissions (project/team level)
+- [x] Add role expiration support
+- [x] Write RBAC tests (55 tests)
 
 ### Compliance Reports
 - [ ] Create `@contextgraph/compliance` package

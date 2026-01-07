@@ -72,6 +72,8 @@ ContextGraph OS provides the foundational infrastructure for building AI agent s
 | `@contextgraph/agent` | Agent registry, capabilities, and problem-space graphs |
 | `@contextgraph/retrieval` | Context assembly with temporal and scope filtering |
 | `@contextgraph/execution` | Agent execution framework with policy enforcement |
+| `@contextgraph/webhooks` | Webhook management with delivery queue and retry logic |
+| `@contextgraph/rbac` | Role-Based Access Control with built-in roles and permission checking |
 | `@contextgraph/sdk` | Unified high-level SDK for ContextGraph OS |
 | `@contextgraph/api` | REST API server with Express, authentication, and rate limiting |
 | `@contextgraph/cli` | CLI tools, formatters, inspector, and interactive REPL |
@@ -604,7 +606,7 @@ pnpm --filter @contextgraph/sdk test
 pnpm --filter @contextgraph/demos test
 ```
 
-**Test Coverage:** 336 tests across 15 packages
+**Test Coverage:** 442 tests across 17 packages
 
 ## Project Status
 
@@ -624,7 +626,9 @@ pnpm --filter @contextgraph/demos test
 | E11 | ✅ | CLI and inspection tools |
 | E12-13 | ✅ | Demos and integration testing |
 | E14 | ✅ | REST API layer |
-| E14b | ✅ | Import/Export functionality |
+| E14b | ✅ | Webhook support |
+| E14c | ✅ | Import/Export functionality |
+| E15a | ✅ | Role-Based Access Control (RBAC) |
 
 ## License
 

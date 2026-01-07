@@ -293,6 +293,22 @@ importers:
         specifier: ^1.6.0
         version: 1.6.1(@types/node@20.19.27)
 
+  packages/rbac:
+    dependencies:
+      '@contextgraph/core':
+        specifier: workspace:*
+        version: link:../core
+      '@contextgraph/storage':
+        specifier: workspace:*
+        version: link:../storage
+    devDependencies:
+      typescript:
+        specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.27)
+
   packages/retrieval:
     dependencies:
       '@contextgraph/agent':
