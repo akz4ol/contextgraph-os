@@ -121,6 +121,40 @@ importers:
         specifier: ^1.6.0
         version: 1.6.1(@types/node@20.19.27)
 
+  packages/execution:
+    dependencies:
+      '@contextgraph/agent':
+        specifier: workspace:*
+        version: link:../agent
+      '@contextgraph/ckg':
+        specifier: workspace:*
+        version: link:../ckg
+      '@contextgraph/core':
+        specifier: workspace:*
+        version: link:../core
+      '@contextgraph/dtg':
+        specifier: workspace:*
+        version: link:../dtg
+      '@contextgraph/policy':
+        specifier: workspace:*
+        version: link:../policy
+      '@contextgraph/provenance':
+        specifier: workspace:*
+        version: link:../provenance
+      '@contextgraph/retrieval':
+        specifier: workspace:*
+        version: link:../retrieval
+      '@contextgraph/storage':
+        specifier: workspace:*
+        version: link:../storage
+    devDependencies:
+      typescript:
+        specifier: ^5.3.0
+        version: 5.9.3
+      vitest:
+        specifier: ^1.0.0
+        version: 1.6.1(@types/node@20.19.27)
+
   packages/ontology:
     dependencies:
       '@contextgraph/core':
