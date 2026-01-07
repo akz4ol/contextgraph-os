@@ -340,7 +340,7 @@ This project is dual-licensed:
 - **AGPL-3.0** - Free for open source use (requires source disclosure for modifications and network services)
 - **Commercial License** - Available for proprietary use without AGPL obligations
 
-See [LICENSE](./LICENSE) for details.
+See [LICENSING.md](./LICENSING.md) for details.
 
 ## Contributing
 
