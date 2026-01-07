@@ -312,6 +312,41 @@ export class SQLiteStorage extends StorageInterface {
     }
   }
 
+  async upsert<T extends StorageRecord>(
+    collection: string,
+    record: T
+  ): Promise<Result<T, StorageError>> {
+    try {
+      this.ensureConnected();
+      const now = createTimestamp();
+      const recordWithTimestamp = { ...record, createdAt: record.createdAt ?? now };
+
+      const columns = Object.keys(recordWithTimestamp);
+      const placeholders = columns.map(() => '?').join(', ');
+      const updateSets = columns
+        .filter((c) => c !== 'id')
+        .map((c) => `${this.escapeIdentifier(c)} = excluded.${this.escapeIdentifier(c)}`)
+        .join(', ');
+      const values: SqlValue[] = columns.map((col) => {
+        const value = recordWithTimestamp[col as keyof typeof recordWithTimestamp];
+        return (typeof value === 'object' && value !== null ? JSON.stringify(value) : value) as SqlValue;
+      });
+
+      const sql = `INSERT INTO ${this.escapeIdentifier(collection)} (${columns.map((c) => this.escapeIdentifier(c)).join(', ')}) VALUES (${placeholders}) ON CONFLICT(id) DO UPDATE SET ${updateSets}`;
+      this.db!.run(sql, values);
+      this.isDirty = true;
+
+      return ok(recordWithTimestamp as T);
+    } catch (error) {
+      return err(
+        new StorageError(
+          `Upsert failed: ${error instanceof Error ? error.message : String(error)}`,
+          'QUERY_FAILED'
+        )
+      );
+    }
+  }
+
   async query<T>(
     sql: string,
     params?: readonly unknown[]

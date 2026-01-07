@@ -136,6 +136,14 @@ export abstract class StorageInterface {
   ): Promise<Result<number, StorageError>>;
 
   /**
+   * Upsert a record (insert or update if exists)
+   */
+  abstract upsert<T extends StorageRecord>(
+    collection: string,
+    record: T
+  ): Promise<Result<T, StorageError>>;
+
+  /**
    * Execute a raw query (for advanced use cases)
    */
   abstract query<T>(

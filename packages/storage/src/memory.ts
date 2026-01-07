@@ -170,6 +170,23 @@ export class InMemoryStorage extends StorageInterface {
     return ok(result.value.total);
   }
 
+  async upsert<T extends StorageRecord>(
+    collection: string,
+    record: T
+  ): Promise<Result<T, StorageError>> {
+    this.ensureInitialized();
+
+    if (!this.collections.has(collection)) {
+      this.collections.set(collection, new Map());
+    }
+
+    const col = this.collections.get(collection)!;
+    const now = createTimestamp();
+    const recordWithTimestamp = { ...record, createdAt: record.createdAt ?? now } as T;
+    col.set(record.id, recordWithTimestamp);
+    return ok(recordWithTimestamp);
+  }
+
   async query<T>(
     _sql: string,
     _params?: readonly unknown[]

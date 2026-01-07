@@ -234,17 +234,11 @@ export class DecisionRepository {
       return err(deleteResult.error);
     }
 
-    // Simple approach: overwrite by inserting with same ID
-    // The storage should handle this as an upsert
+    // Use upsert to update the decision in storage
     const record = updatedDecision.toRecord();
-
-    // For in-memory storage, we need to handle this differently
-    // Let's use a workaround by querying and updating
-    const insertResult = await this.storage.insert(this.collection, record);
-    if (!insertResult.ok) {
-      // If duplicate key error, the record exists - we need a proper update mechanism
-      // For now, this is a limitation
-      return err(insertResult.error);
+    const upsertResult = await this.storage.upsert(this.collection, record);
+    if (!upsertResult.ok) {
+      return err(upsertResult.error);
     }
 
     return ok({
