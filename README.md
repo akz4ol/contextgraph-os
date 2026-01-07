@@ -298,6 +298,177 @@ client.on('decision:approved', (event) => {
 client.off('entity:created', handler);
 ```
 
+## Running Demos
+
+ContextGraph OS includes two interactive demos that showcase the system's capabilities:
+
+### Basic Usage Demo
+
+Demonstrates entity creation, claims with provenance, and knowledge graph querying:
+
+```bash
+cd packages/demos
+pnpm demo:basic
+```
+
+**Expected output:**
+```
+============================================================
+ContextGraph OS - Basic Usage Demo
+============================================================
+
+Creating ContextGraph client...
+Client created successfully.
+
+Creating entities...
+  Created: Alice (ent_xxx)
+  Created: ContextGraph OS (ent_xxx)
+
+Adding claims with provenance...
+  Added: Alice works_on ContextGraph OS
+  Added: Alice has_skill TypeScript
+  Added: ContextGraph OS uses_technology TypeScript
+
+Querying the knowledge graph...
+  Claims for Alice:
+    - works_on: ContextGraph OS
+    - has_skill: TypeScript
+
+Verifying provenance chain...
+  Chain valid: true
+  Entries verified: 5
+
+System statistics:
+  Entities: 2
+  Claims: 3
+  Agents: 0
+  Decisions: 0
+  Policies: 0
+
+============================================================
+Demo completed successfully!
+============================================================
+```
+
+### Agent Workflow Demo
+
+Demonstrates agent creation, action handlers, workflow execution, and audit trails:
+
+```bash
+cd packages/demos
+pnpm demo:agent
+```
+
+**Expected output:**
+```
+============================================================
+ContextGraph OS - Agent Workflow Demo
+============================================================
+
+Creating ContextGraph client...
+Client created successfully.
+
+Creating agents...
+  Created: orchestrator (agt_xxx)
+  Created: worker (agt_xxx)
+
+Registering action handlers...
+  Handlers registered: data_processing, configuration, report
+
+Recording workflow decision...
+  Decision recorded: Execute data processing pipeline
+  Status: proposed
+  Risk Level: medium
+
+Executing workflow actions...
+  [Handler] Reading configuration: pipeline-config
+  Read config: Success
+  [Handler] Processing data: {"inputPath":"/data/input","outputPath":"/data/output"}
+  Process data: Success
+  [Handler] Writing report: {"title":"Processing Summary","format":"json"}
+  Write report: Success
+
+Audit trail:
+  [HH:MM:SS] read       configuration/pipeline-co... allowed
+  [HH:MM:SS] execute    data_processing             allowed
+  [HH:MM:SS] write      report                      allowed
+
+Active agents:
+  - orchestrator: Main workflow orchestrator agent
+  - worker: Task execution worker agent
+
+Provenance verification:
+  Chain integrity: VALID
+  Total entries: 8
+
+============================================================
+Demo completed successfully!
+============================================================
+```
+
+## CLI Interactive REPL
+
+The CLI includes a powerful interactive REPL for exploring and managing your graph:
+
+```bash
+# Start the REPL
+npx contextgraph repl
+```
+
+**REPL Session Example:**
+```
+ContextGraph OS REPL v0.1.0
+Type 'help' for available commands, 'exit' to quit.
+
+contextgraph> help
+Available commands:
+  help              Show this help message
+  stats             Show system statistics
+  entities [type]   List entities (optionally filter by type)
+  entity <id>       Inspect an entity
+  agents            List active agents
+  agent <id|name>   Inspect an agent
+  decisions         List pending decisions
+  policies          List effective policies
+  audit             Show audit trail
+  prov, provenance  Query provenance entries
+  verify            Verify provenance chain
+  ctx, context <id> Assemble context for entity
+  json              Toggle JSON output mode
+  exit, quit        Exit the REPL
+
+contextgraph> stats
+╔═══════════════════════════════════════╗
+║         System Statistics             ║
+╠═══════════════════════════════════════╣
+║  Entities:    42                      ║
+║  Claims:      156                     ║
+║  Agents:      3                       ║
+║  Decisions:   12                      ║
+║  Policies:    5                       ║
+╚═══════════════════════════════════════╝
+
+contextgraph> entities person --limit 5
+┌──────────────────┬─────────┬───────────────────────┐
+│ ID               │ Type    │ Name                  │
+├──────────────────┼─────────┼───────────────────────┤
+│ ent_abc123...    │ person  │ Alice                 │
+│ ent_def456...    │ person  │ Bob                   │
+│ ent_ghi789...    │ person  │ Charlie               │
+└──────────────────┴─────────┴───────────────────────┘
+
+contextgraph> verify
+Provenance Chain Verification
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Status: ✓ VALID
+Entries verified: 203
+Broken links: 0
+Invalid hashes: 0
+
+contextgraph> exit
+Goodbye!
+```
+
 ## Testing
 
 The project includes comprehensive tests for all packages:
@@ -309,11 +480,11 @@ pnpm -r test
 # Run tests for a specific package
 pnpm --filter @contextgraph/sdk test
 
-# Run demos
+# Run integration tests (demos)
 pnpm --filter @contextgraph/demos test
 ```
 
-**Test Coverage**: 318 tests across 14 packages
+**Test Coverage:** 318 tests across 14 packages
 
 ## Project Status
 
