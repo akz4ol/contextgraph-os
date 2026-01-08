@@ -32,3 +32,25 @@ export {
 export {
   PolicyLedger,
 } from './ledger.js';
+
+export {
+  type TemplateVariable,
+  type PolicyTemplate,
+  type TemplateRule,
+  type TemplateCondition,
+  type TemplateVariables,
+  POLICY_TEMPLATES,
+  PolicyTemplateManager,
+} from './templates.js';
+
+export {
+  type SimulationScenario,
+  type ScenarioResult,
+  type SimulationResult,
+  type RuleCoverage,
+  type PolicyCoverage,
+  type CoverageReport,
+  type DryRunResult,
+  type PolicyDiff,
+  PolicySimulator,
+} from './simulator.js';

@@ -145,36 +145,40 @@ This document tracks planned features and improvements for ContextGraph OS.
   - [ ] Encryption at rest verification
 - [x] Write compliance tests (33 tests)
 
-### Policy Templates
-- [ ] Create policy template library in `@contextgraph/policy`:
-  - [ ] `templates/read-only.json` - Read-only access
-  - [ ] `templates/pii-protection.json` - PII data protection
-  - [ ] `templates/approval-required.json` - Require approvals
-  - [ ] `templates/rate-limit.json` - Rate limiting
-  - [ ] `templates/time-based.json` - Time-based access
-  - [ ] `templates/jurisdiction.json` - Geographic restrictions
-- [ ] Implement template functions:
-  - [ ] `loadTemplate(name, variables)`
-  - [ ] `listTemplates()`
-  - [ ] `validateTemplate(template)`
+### Policy Templates ✅
+- [x] Create policy template library in `@contextgraph/policy`:
+  - [x] `read-only` - Read-only access
+  - [x] `pii-protection` - PII data protection
+  - [x] `approval-required` - Require approvals
+  - [x] `rate-limit` - Rate limiting
+  - [x] `time-based` - Time-based access
+  - [x] `jurisdiction` - Geographic restrictions
+- [x] Implement template functions:
+  - [x] `PolicyTemplateManager.loadTemplate(name, variables)`
+  - [x] `PolicyTemplateManager.listTemplates()`
+  - [x] `PolicyTemplateManager.validateTemplate(template)`
+  - [x] `PolicyTemplateManager.registerTemplate(template)` - Custom templates
+  - [x] `PolicyTemplateManager.getTemplatesByCategory(category)`
 - [ ] Add CLI commands:
   - [ ] `contextgraph policy templates` - List templates
   - [ ] `contextgraph policy apply <template>` - Apply template
-- [ ] Write template tests
+- [x] Write template tests (15 tests)
 
-### Policy Simulation
-- [ ] Add simulation mode to policy engine:
-  - [ ] `simulatePolicy(policy, scenarios)` - Test policy
-  - [ ] `dryRun(action, context)` - Check without executing
-  - [ ] `comparePolices(policy1, policy2)` - Diff policies
-- [ ] Implement scenario testing:
-  - [ ] Define test scenarios in JSON
-  - [ ] Run scenarios against policies
-  - [ ] Generate coverage reports
+### Policy Simulation ✅
+- [x] Add simulation mode to policy engine:
+  - [x] `PolicySimulator.simulatePolicy(policy, scenarios)` - Test policy
+  - [x] `PolicySimulator.simulatePolicies(policies, scenarios)` - Test multiple
+  - [x] `PolicySimulator.dryRun(policies, context)` - Check without executing
+  - [x] `PolicySimulator.comparePolicies(policy1, policy2)` - Diff policies
+  - [x] `PolicySimulator.generateScenarios(policy)` - Auto-generate test cases
+- [x] Implement scenario testing:
+  - [x] Define test scenarios with expected decisions
+  - [x] Run scenarios against policies
+  - [x] Generate coverage reports (per rule, per policy)
 - [ ] Add CLI commands:
   - [ ] `contextgraph policy simulate <file>`
   - [ ] `contextgraph policy dry-run <action>`
-- [ ] Write simulation tests
+- [x] Write simulation tests (10 tests)
 
 ### Agent Hierarchies
 - [ ] Extend `@contextgraph/agent`:
