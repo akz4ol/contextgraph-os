@@ -206,26 +206,31 @@ This document tracks planned features and improvements for ContextGraph OS.
 
 ## Phase 3: Developer Experience (E16)
 
-### OpenTelemetry Integration
-- [ ] Create `@contextgraph/telemetry` package
-- [ ] Implement tracing:
-  - [ ] Span for each SDK method
-  - [ ] Trace context propagation
-  - [ ] Custom attributes (entity IDs, agent IDs)
-- [ ] Implement metrics:
-  - [ ] `contextgraph.entities.count` - Entity count
-  - [ ] `contextgraph.claims.count` - Claim count
-  - [ ] `contextgraph.executions.duration` - Execution time
-  - [ ] `contextgraph.provenance.verification.duration`
-- [ ] Implement logging:
-  - [ ] Structured JSON logs
-  - [ ] Log levels (debug, info, warn, error)
-  - [ ] Correlation IDs
-- [ ] Export to:
-  - [ ] Jaeger
-  - [ ] Prometheus
-  - [ ] Console (development)
-- [ ] Write telemetry tests
+### OpenTelemetry Integration ✅
+- [x] Create `@contextgraph/telemetry` package
+- [x] Implement tracing:
+  - [x] Span and Tracer classes with context propagation
+  - [x] W3C Trace Context support (parseTraceParent, formatTraceParent)
+  - [x] Active span management with async support
+  - [x] Custom attributes (spanKind, links, events)
+- [x] Implement metrics:
+  - [x] Counter for monotonically increasing values
+  - [x] Gauge for up/down measurements
+  - [x] Histogram with configurable buckets and timing
+  - [x] Meter factory with namespace support
+  - [x] Pre-defined ContextGraph metrics (entities, claims, durations)
+- [x] Implement logging:
+  - [x] Structured JSON logs
+  - [x] Log levels (debug, info, warn, error)
+  - [x] Span context correlation (traceId, spanId)
+  - [x] Child loggers with attribute inheritance
+- [x] Export to:
+  - [x] OTLPJsonExporter (Jaeger/Prometheus/OTLP)
+  - [x] ConsoleExporter (development)
+  - [x] MemoryExporter (testing)
+  - [x] MultiExporter (fan-out)
+- [x] Central TelemetryProvider with recordOperation helper
+- [x] Write telemetry tests (133 tests)
 
 ### Query Optimization
 - [ ] Add indexing to storage:
