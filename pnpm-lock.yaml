@@ -145,6 +145,37 @@ importers:
         specifier: ^1.0.0
         version: 1.6.1(@types/node@20.19.27)
 
+  packages/compliance:
+    dependencies:
+      '@contextgraph/agent':
+        specifier: workspace:*
+        version: link:../agent
+      '@contextgraph/ckg':
+        specifier: workspace:*
+        version: link:../ckg
+      '@contextgraph/core':
+        specifier: workspace:*
+        version: link:../core
+      '@contextgraph/dtg':
+        specifier: workspace:*
+        version: link:../dtg
+      '@contextgraph/execution':
+        specifier: workspace:*
+        version: link:../execution
+      '@contextgraph/provenance':
+        specifier: workspace:*
+        version: link:../provenance
+      '@contextgraph/storage':
+        specifier: workspace:*
+        version: link:../storage
+    devDependencies:
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.27)
+
   packages/core:
     devDependencies:
       typescript:

@@ -1,0 +1,36 @@
+{
+  "name": "@contextgraph/compliance",
+  "version": "0.1.0",
+  "description": "Compliance reporting and GDPR features for ContextGraph OS",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run --config vitest.config.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@contextgraph/core": "workspace:*",
+    "@contextgraph/storage": "workspace:*",
+    "@contextgraph/ckg": "workspace:*",
+    "@contextgraph/provenance": "workspace:*",
+    "@contextgraph/dtg": "workspace:*",
+    "@contextgraph/agent": "workspace:*",
+    "@contextgraph/execution": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ]
+}
