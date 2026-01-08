@@ -180,21 +180,27 @@ This document tracks planned features and improvements for ContextGraph OS.
   - [ ] `contextgraph policy dry-run <action>`
 - [x] Write simulation tests (10 tests)
 
-### Agent Hierarchies
-- [ ] Extend `@contextgraph/agent`:
-  - [ ] Add `parentId` to agent schema
-  - [ ] `createChildAgent(parentId, config)`
-  - [ ] `getChildAgents(parentId)`
-  - [ ] `getAgentHierarchy(rootId)`
-- [ ] Implement delegation:
-  - [ ] `delegateCapability(fromAgent, toAgent, capability)`
-  - [ ] `revokeDelegate(fromAgent, toAgent, capability)`
-  - [ ] Automatic capability inheritance
-- [ ] Implement supervision:
-  - [ ] Parent approval for child actions
-  - [ ] Cascade disable/enable
-  - [ ] Audit trail for delegation
-- [ ] Write hierarchy tests
+### Agent Hierarchies ✅
+- [x] Extend `@contextgraph/agent`:
+  - [x] Add `parentId` to agent schema (already existed)
+  - [x] `AgentHierarchyManager.createChildAgent(parentId, config)`
+  - [x] `AgentHierarchyManager.getChildren(parentId)`
+  - [x] `AgentHierarchyManager.getDescendants(agentId)` - Recursive
+  - [x] `AgentHierarchyManager.getHierarchy(rootId)` - Full tree
+  - [x] `AgentHierarchyManager.getAncestors(agentId)` - Path to root
+  - [x] `AgentHierarchyManager.isDescendantOf(agentId, ancestorId)`
+- [x] Implement delegation:
+  - [x] `AgentHierarchyManager.delegateCapability(input)`
+  - [x] `AgentHierarchyManager.revokeDelegation(from, to, cap, revokedBy)`
+  - [x] `AgentHierarchyManager.getDelegationsFrom(agentId)`
+  - [x] `AgentHierarchyManager.getDelegationsTo(agentId)`
+- [x] Implement supervision:
+  - [x] `AgentHierarchyManager.requiresParentApproval(childId, action, resource)`
+  - [x] `AgentHierarchyManager.cascadeSuspend(agentId)` - Suspend descendants
+  - [x] `AgentHierarchyManager.cascadeRevoke(agentId)` - Revoke descendants
+  - [x] `AgentHierarchyManager.cascadeReactivate(agentId)` - Reactivate descendants
+  - [x] Delegation records stored for audit trail
+- [x] Write hierarchy tests (14 tests)
 
 ---
 

@@ -7,10 +7,12 @@ import { InMemoryStorage } from '@contextgraph/storage';
 import {
   Agent,
   AgentRegistry,
+  AgentHierarchyManager,
   CapabilityRegistry,
   ProblemSpaceManager,
   BUILTIN_CAPABILITIES,
   initializeBuiltinCapabilities,
+  type AgentId,
   type CapabilityId,
   type ProblemSpaceId,
 } from './index.js';
@@ -686,5 +688,378 @@ describe('AgentRegistry', () => {
     expect(result.value.active).toBe(2);
     expect(result.value.suspended).toBe(0);
     expect(result.value.revoked).toBe(0);
+  });
+});
+
+describe('AgentHierarchyManager', () => {
+  let storage: InMemoryStorage;
+  let hierarchyManager: AgentHierarchyManager;
+
+  beforeEach(async () => {
+    storage = new InMemoryStorage();
+    await storage.initialize();
+    hierarchyManager = new AgentHierarchyManager(storage);
+  });
+
+  describe('Child agent creation', () => {
+    it('creates child agent under parent', async () => {
+      // Create parent
+      const parentResult = await hierarchyManager.getRegistry().create({ name: 'Parent Agent' });
+      expect(parentResult.ok).toBe(true);
+      if (!parentResult.ok) return;
+
+      // Create child
+      const childResult = await hierarchyManager.createChildAgent(
+        parentResult.value.data.id,
+        { name: 'Child Agent' }
+      );
+
+      expect(childResult.ok).toBe(true);
+      if (!childResult.ok) return;
+
+      expect(childResult.value.data.parentAgentId).toBe(parentResult.value.data.id);
+    });
+
+    it('fails to create child under non-existent parent', async () => {
+      const result = await hierarchyManager.createChildAgent(
+        'nonexistent' as AgentId,
+        { name: 'Child Agent' }
+      );
+
+      expect(result.ok).toBe(false);
+      if (result.ok) return;
+      expect(result.error.message).toContain('not found');
+    });
+  });
+
+  describe('Hierarchy traversal', () => {
+    it('gets direct children', async () => {
+      // Create parent
+      const parentResult = await hierarchyManager.getRegistry().create({ name: 'Parent' });
+      expect(parentResult.ok).toBe(true);
+      if (!parentResult.ok) return;
+
+      // Create children
+      await hierarchyManager.createChildAgent(parentResult.value.data.id, { name: 'Child 1' });
+      await hierarchyManager.createChildAgent(parentResult.value.data.id, { name: 'Child 2' });
+
+      const childrenResult = await hierarchyManager.getChildren(parentResult.value.data.id);
+      expect(childrenResult.ok).toBe(true);
+      if (!childrenResult.ok) return;
+
+      expect(childrenResult.value).toHaveLength(2);
+    });
+
+    it('gets all descendants recursively', async () => {
+      // Create hierarchy: Root -> Child1 -> Grandchild
+      const rootResult = await hierarchyManager.getRegistry().create({ name: 'Root' });
+      expect(rootResult.ok).toBe(true);
+      if (!rootResult.ok) return;
+
+      const child1Result = await hierarchyManager.createChildAgent(rootResult.value.data.id, { name: 'Child 1' });
+      expect(child1Result.ok).toBe(true);
+      if (!child1Result.ok) return;
+
+      await hierarchyManager.createChildAgent(child1Result.value.data.id, { name: 'Grandchild' });
+
+      const descendantsResult = await hierarchyManager.getDescendants(rootResult.value.data.id);
+      expect(descendantsResult.ok).toBe(true);
+      if (!descendantsResult.ok) return;
+
+      expect(descendantsResult.value).toHaveLength(2);
+    });
+
+    it('gets full hierarchy tree', async () => {
+      // Create hierarchy
+      const rootResult = await hierarchyManager.getRegistry().create({ name: 'Root' });
+      expect(rootResult.ok).toBe(true);
+      if (!rootResult.ok) return;
+
+      await hierarchyManager.createChildAgent(rootResult.value.data.id, { name: 'Child 1' });
+      await hierarchyManager.createChildAgent(rootResult.value.data.id, { name: 'Child 2' });
+
+      const hierarchyResult = await hierarchyManager.getHierarchy(rootResult.value.data.id);
+      expect(hierarchyResult.ok).toBe(true);
+      if (!hierarchyResult.ok) return;
+
+      expect(hierarchyResult.value.agent.data.name).toBe('Root');
+      expect(hierarchyResult.value.depth).toBe(0);
+      expect(hierarchyResult.value.children).toHaveLength(2);
+      expect(hierarchyResult.value.children[0]!.depth).toBe(1);
+    });
+
+    it('gets ancestors path', async () => {
+      // Create: Root -> Child -> Grandchild
+      const rootResult = await hierarchyManager.getRegistry().create({ name: 'Root' });
+      expect(rootResult.ok).toBe(true);
+      if (!rootResult.ok) return;
+
+      const childResult = await hierarchyManager.createChildAgent(rootResult.value.data.id, { name: 'Child' });
+      expect(childResult.ok).toBe(true);
+      if (!childResult.ok) return;
+
+      const grandchildResult = await hierarchyManager.createChildAgent(childResult.value.data.id, { name: 'Grandchild' });
+      expect(grandchildResult.ok).toBe(true);
+      if (!grandchildResult.ok) return;
+
+      const ancestorsResult = await hierarchyManager.getAncestors(grandchildResult.value.data.id);
+      expect(ancestorsResult.ok).toBe(true);
+      if (!ancestorsResult.ok) return;
+
+      expect(ancestorsResult.value).toHaveLength(2);
+      expect(ancestorsResult.value[0]!.data.name).toBe('Child');
+      expect(ancestorsResult.value[1]!.data.name).toBe('Root');
+    });
+
+    it('checks isDescendantOf correctly', async () => {
+      // Create: Root -> Child -> Grandchild
+      const rootResult = await hierarchyManager.getRegistry().create({ name: 'Root' });
+      expect(rootResult.ok).toBe(true);
+      if (!rootResult.ok) return;
+
+      const childResult = await hierarchyManager.createChildAgent(rootResult.value.data.id, { name: 'Child' });
+      expect(childResult.ok).toBe(true);
+      if (!childResult.ok) return;
+
+      const grandchildResult = await hierarchyManager.createChildAgent(childResult.value.data.id, { name: 'Grandchild' });
+      expect(grandchildResult.ok).toBe(true);
+      if (!grandchildResult.ok) return;
+
+      const isDescendant = await hierarchyManager.isDescendantOf(
+        grandchildResult.value.data.id,
+        rootResult.value.data.id
+      );
+      expect(isDescendant.ok).toBe(true);
+      if (!isDescendant.ok) return;
+      expect(isDescendant.value).toBe(true);
+
+      const notDescendant = await hierarchyManager.isDescendantOf(
+        rootResult.value.data.id,
+        grandchildResult.value.data.id
+      );
+      expect(notDescendant.ok).toBe(true);
+      if (!notDescendant.ok) return;
+      expect(notDescendant.value).toBe(false);
+    });
+  });
+
+  describe('Cascade operations', () => {
+    it('cascade suspends all descendants', async () => {
+      // Create hierarchy
+      const rootResult = await hierarchyManager.getRegistry().create({ name: 'Root' });
+      expect(rootResult.ok).toBe(true);
+      if (!rootResult.ok) return;
+
+      const childResult = await hierarchyManager.createChildAgent(rootResult.value.data.id, { name: 'Child' });
+      expect(childResult.ok).toBe(true);
+      if (!childResult.ok) return;
+
+      await hierarchyManager.createChildAgent(childResult.value.data.id, { name: 'Grandchild' });
+
+      const cascadeResult = await hierarchyManager.cascadeSuspend(rootResult.value.data.id);
+      expect(cascadeResult.ok).toBe(true);
+      if (!cascadeResult.ok) return;
+
+      expect(cascadeResult.value.operation).toBe('suspend');
+      expect(cascadeResult.value.affectedAgents).toHaveLength(3);
+    });
+
+    it('cascade revokes all descendants', async () => {
+      // Create parent and child
+      const parentResult = await hierarchyManager.getRegistry().create({ name: 'Parent' });
+      expect(parentResult.ok).toBe(true);
+      if (!parentResult.ok) return;
+
+      await hierarchyManager.createChildAgent(parentResult.value.data.id, { name: 'Child' });
+
+      const cascadeResult = await hierarchyManager.cascadeRevoke(parentResult.value.data.id);
+      expect(cascadeResult.ok).toBe(true);
+      if (!cascadeResult.ok) return;
+
+      expect(cascadeResult.value.operation).toBe('revoke');
+      expect(cascadeResult.value.affectedAgents).toHaveLength(2);
+    });
+  });
+
+  describe('Delegation', () => {
+    it('delegates capability between agents', async () => {
+      // Initialize capabilities
+      const capRegistry = new CapabilityRegistry();
+      initializeBuiltinCapabilities(capRegistry);
+
+      // Create agents
+      const fromResult = await hierarchyManager.getRegistry().create({ name: 'From Agent' });
+      expect(fromResult.ok).toBe(true);
+      if (!fromResult.ok) return;
+
+      const toResult = await hierarchyManager.getRegistry().create({ name: 'To Agent' });
+      expect(toResult.ok).toBe(true);
+      if (!toResult.ok) return;
+
+      // Grant source agent the capability and delegate permission
+      const readCap = 'cap_read' as CapabilityId;
+      const delegateCap = 'cap_delegate' as CapabilityId;
+      const grantedBy = 'admin' as EntityId;
+
+      let fromAgent = fromResult.value.grantCapability({ capabilityId: readCap, grantedBy });
+      expect(fromAgent.ok).toBe(true);
+      if (!fromAgent.ok) return;
+
+      fromAgent = fromAgent.value.grantCapability({ capabilityId: delegateCap, grantedBy });
+      expect(fromAgent.ok).toBe(true);
+      if (!fromAgent.ok) return;
+
+      await storage.upsert('agents', fromAgent.value.toRecord());
+
+      // Delegate
+      const delegateResult = await hierarchyManager.delegateCapability({
+        fromAgentId: fromResult.value.data.id,
+        toAgentId: toResult.value.data.id,
+        capabilityId: readCap,
+        delegatedBy: grantedBy,
+      });
+
+      expect(delegateResult.ok).toBe(true);
+      if (!delegateResult.ok) return;
+
+      expect(delegateResult.value.fromAgentId).toBe(fromResult.value.data.id);
+      expect(delegateResult.value.toAgentId).toBe(toResult.value.data.id);
+    });
+
+    it('revokes delegation', async () => {
+      // Setup similar to above
+      const capRegistry = new CapabilityRegistry();
+      initializeBuiltinCapabilities(capRegistry);
+
+      const fromResult = await hierarchyManager.getRegistry().create({ name: 'From Agent' });
+      expect(fromResult.ok).toBe(true);
+      if (!fromResult.ok) return;
+
+      const toResult = await hierarchyManager.getRegistry().create({ name: 'To Agent' });
+      expect(toResult.ok).toBe(true);
+      if (!toResult.ok) return;
+
+      const readCap = 'cap_read' as CapabilityId;
+      const delegateCap = 'cap_delegate' as CapabilityId;
+      const grantedBy = 'admin' as EntityId;
+
+      let fromAgent = fromResult.value.grantCapability({ capabilityId: readCap, grantedBy });
+      expect(fromAgent.ok).toBe(true);
+      if (!fromAgent.ok) return;
+
+      fromAgent = fromAgent.value.grantCapability({ capabilityId: delegateCap, grantedBy });
+      expect(fromAgent.ok).toBe(true);
+      if (!fromAgent.ok) return;
+
+      await storage.upsert('agents', fromAgent.value.toRecord());
+
+      // Delegate
+      await hierarchyManager.delegateCapability({
+        fromAgentId: fromResult.value.data.id,
+        toAgentId: toResult.value.data.id,
+        capabilityId: readCap,
+        delegatedBy: grantedBy,
+      });
+
+      // Revoke
+      const revokeResult = await hierarchyManager.revokeDelegation(
+        fromResult.value.data.id,
+        toResult.value.data.id,
+        readCap,
+        grantedBy
+      );
+
+      expect(revokeResult.ok).toBe(true);
+    });
+
+    it('gets delegations from agent', async () => {
+      const capRegistry = new CapabilityRegistry();
+      initializeBuiltinCapabilities(capRegistry);
+
+      const fromResult = await hierarchyManager.getRegistry().create({ name: 'From Agent' });
+      expect(fromResult.ok).toBe(true);
+      if (!fromResult.ok) return;
+
+      const toResult = await hierarchyManager.getRegistry().create({ name: 'To Agent' });
+      expect(toResult.ok).toBe(true);
+      if (!toResult.ok) return;
+
+      const readCap = 'cap_read' as CapabilityId;
+      const delegateCap = 'cap_delegate' as CapabilityId;
+      const grantedBy = 'admin' as EntityId;
+
+      let fromAgent = fromResult.value.grantCapability({ capabilityId: readCap, grantedBy });
+      expect(fromAgent.ok).toBe(true);
+      if (!fromAgent.ok) return;
+
+      fromAgent = fromAgent.value.grantCapability({ capabilityId: delegateCap, grantedBy });
+      expect(fromAgent.ok).toBe(true);
+      if (!fromAgent.ok) return;
+
+      await storage.upsert('agents', fromAgent.value.toRecord());
+
+      await hierarchyManager.delegateCapability({
+        fromAgentId: fromResult.value.data.id,
+        toAgentId: toResult.value.data.id,
+        capabilityId: readCap,
+        delegatedBy: grantedBy,
+      });
+
+      const delegationsResult = await hierarchyManager.getDelegationsFrom(fromResult.value.data.id);
+      expect(delegationsResult.ok).toBe(true);
+      if (!delegationsResult.ok) return;
+
+      expect(delegationsResult.value).toHaveLength(1);
+    });
+  });
+
+  describe('Parent approval', () => {
+    it('checks parent approval requirement', async () => {
+      // Create parent with admin capability
+      const parentResult = await hierarchyManager.getRegistry().create({ name: 'Parent' });
+      expect(parentResult.ok).toBe(true);
+      if (!parentResult.ok) return;
+
+      const adminCap = 'cap_admin' as CapabilityId;
+      const grantedBy = 'system' as EntityId;
+
+      const parentWithCap = parentResult.value.grantCapability({ capabilityId: adminCap, grantedBy });
+      expect(parentWithCap.ok).toBe(true);
+      if (!parentWithCap.ok) return;
+
+      await storage.upsert('agents', parentWithCap.value.toRecord());
+
+      // Create child under parent
+      const childResult = await hierarchyManager.createChildAgent(parentResult.value.data.id, { name: 'Child' });
+      expect(childResult.ok).toBe(true);
+      if (!childResult.ok) return;
+
+      // Check if approval required
+      const requiresApproval = await hierarchyManager.requiresParentApproval(
+        childResult.value.data.id,
+        'delete',
+        'document'
+      );
+
+      expect(requiresApproval.ok).toBe(true);
+      if (!requiresApproval.ok) return;
+      expect(requiresApproval.value).toBe(true);
+    });
+
+    it('returns false for agent without parent', async () => {
+      const agentResult = await hierarchyManager.getRegistry().create({ name: 'Standalone Agent' });
+      expect(agentResult.ok).toBe(true);
+      if (!agentResult.ok) return;
+
+      const requiresApproval = await hierarchyManager.requiresParentApproval(
+        agentResult.value.data.id,
+        'delete',
+        'document'
+      );
+
+      expect(requiresApproval.ok).toBe(true);
+      if (!requiresApproval.ok) return;
+      expect(requiresApproval.value).toBe(false);
+    });
   });
 });

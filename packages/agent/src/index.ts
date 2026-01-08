@@ -47,3 +47,13 @@ export {
   AgentRegistry,
   type AgentQueryOptions,
 } from './registry.js';
+
+export {
+  AgentHierarchyManager,
+  type Delegation,
+  type DelegationRecord,
+  type AgentHierarchyNode,
+  type CascadeOperation,
+  type CascadeResult,
+  type DelegateCapabilityInput,
+} from './hierarchy.js';
