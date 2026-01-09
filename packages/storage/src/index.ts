@@ -9,3 +9,5 @@ export { StorageInterface, StorageError, type QueryOptions, type PaginatedResult
 export { SQLiteStorage, type SQLiteStorageOptions } from './sqlite.js';
 export { InMemoryStorage } from './memory.js';
 export { MigrationRunner, type Migration } from './migrations.js';
+export { LRUCache, createCacheKey, type CacheConfig, type CacheStats } from './cache.js';
+export { CachedStorage, createCachedStorage, type CachedStorageConfig } from './cached.js';

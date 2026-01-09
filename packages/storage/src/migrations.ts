@@ -271,4 +271,33 @@ export const coreMigrations: readonly Migration[] = [
       );
     `,
   },
+  {
+    version: 8,
+    name: 'add_composite_indexes',
+    up: `
+      -- Claims: optimize queries by subject + predicate (common pattern)
+      CREATE INDEX IF NOT EXISTS idx_claims_subject_predicate ON claims(subjectId, predicate);
+      -- Claims: optimize queries by subject + time (temporal queries)
+      CREATE INDEX IF NOT EXISTS idx_claims_subject_createdAt ON claims(subjectId, createdAt DESC);
+
+      -- Decisions: optimize status filtering with time ordering
+      CREATE INDEX IF NOT EXISTS idx_decisions_status_proposedAt ON decisions(status, proposedAt DESC);
+      -- Decisions: optimize type filtering with time ordering
+      CREATE INDEX IF NOT EXISTS idx_decisions_type_createdAt ON decisions(type, createdAt DESC);
+
+      -- Policies: optimize active policy lookups by priority
+      CREATE INDEX IF NOT EXISTS idx_policies_enabled_priority ON policies(enabled, priority DESC);
+
+      -- Entities: optimize type queries with time ordering
+      CREATE INDEX IF NOT EXISTS idx_entities_type_createdAt ON entities(type, createdAt DESC);
+
+      -- Provenance: optimize actor queries with time ordering
+      CREATE INDEX IF NOT EXISTS idx_provenance_actor_timestamp ON provenance(actor, timestamp DESC);
+      -- Provenance: optimize source type queries
+      CREATE INDEX IF NOT EXISTS idx_provenance_sourceType_timestamp ON provenance(sourceType, timestamp DESC);
+
+      -- Exceptions: optimize status queries with risk level
+      CREATE INDEX IF NOT EXISTS idx_exceptions_status_riskLevel ON exceptions(status, riskLevel);
+    `,
+  },
 ];

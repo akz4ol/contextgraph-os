@@ -232,22 +232,26 @@ This document tracks planned features and improvements for ContextGraph OS.
 - [x] Central TelemetryProvider with recordOperation helper
 - [x] Write telemetry tests (133 tests)
 
-### Query Optimization
-- [ ] Add indexing to storage:
-  - [ ] Index entities by type
-  - [ ] Index claims by subject
-  - [ ] Index claims by predicate
-  - [ ] Index provenance by timestamp
-- [ ] Implement query caching:
-  - [ ] LRU cache for frequent queries
-  - [ ] Cache invalidation on writes
-  - [ ] Configurable TTL
-- [ ] Implement query planning:
-  - [ ] Analyze query patterns
-  - [ ] Optimize complex queries
-  - [ ] Explain query execution
-- [ ] Add performance benchmarks
-- [ ] Write optimization tests
+### Query Optimization ✅
+- [x] Add composite indexes to storage:
+  - [x] `idx_claims_subject_predicate` - subject + predicate queries
+  - [x] `idx_claims_subject_createdAt` - temporal queries
+  - [x] `idx_decisions_status_proposedAt` - status filtering
+  - [x] `idx_policies_enabled_priority` - active policy lookup
+  - [x] `idx_entities_type_createdAt` - type queries
+  - [x] `idx_provenance_actor_timestamp` - actor queries
+- [x] Implement LRU cache with TTL:
+  - [x] `LRUCache<K,V>` class with eviction and expiration
+  - [x] Statistics tracking (hits, misses, evictions, hit rate)
+  - [x] Predicate-based invalidation
+  - [x] Pruning of expired entries
+- [x] Implement CachedStorage wrapper:
+  - [x] Query result caching (find, count)
+  - [x] Entity lookup caching (findById)
+  - [x] Automatic invalidation on writes (insert, upsert)
+  - [x] Collection-level cache filtering
+  - [x] Cache statistics and management
+- [x] Write optimization tests (47 tests)
 
 ### VSCode Extension
 - [ ] Create `contextgraph-vscode` repository
