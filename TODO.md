@@ -274,16 +274,27 @@ This document tracks planned features and improvements for ContextGraph OS.
   - [ ] Verify provenance
 - [ ] Publish to VS Code Marketplace
 
-### Type Generation
-- [ ] Add to `@contextgraph/ontology`:
-  - [ ] `generateTypes(schema)` - Generate TypeScript types
-  - [ ] `generateValidators(schema)` - Generate Zod schemas
-  - [ ] `generateDocs(schema)` - Generate documentation
-- [ ] CLI commands:
+### Type Generation ✅
+- [x] Add to `@contextgraph/ontology`:
+  - [x] `generateTypes(schema)` - Generate TypeScript interfaces
+  - [x] `generateValidators(schema)` - Generate Zod schemas
+  - [x] `generateDocs(schema, format)` - Generate documentation (markdown/JSON)
+- [x] Features:
+  - [x] Entity inheritance resolution
+  - [x] Property type mapping (string, number, boolean, timestamp, json, reference)
+  - [x] Optional properties with `?` modifier
+  - [x] JSDoc comments from schema descriptions
+  - [x] Readonly modifiers option
+  - [x] Namespace wrapping option
+  - [x] Timestamp as Date or number
+  - [x] Relation type generation
+  - [x] Context dimension type generation
+  - [x] Entity type union (`AnyEntity`, `EntityTypeName`)
+  - [x] Zod validation with patterns, min/max, optional
+- [ ] CLI commands (future):
   - [ ] `contextgraph codegen types --output types.ts`
   - [ ] `contextgraph codegen validators --output validators.ts`
-- [ ] Watch mode for development
-- [ ] Write codegen tests
+- [x] Write codegen tests (30 tests)
 
 ---
 
