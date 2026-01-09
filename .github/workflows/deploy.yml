@@ -1,12 +1,13 @@
-name: Deploy Documentation
+name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
       - main
     paths:
+      - 'website/**'
       - 'docs-site/**'
-      - '.github/workflows/docs.yml'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 permissions:
@@ -33,13 +34,25 @@ jobs:
       - name: Build documentation
         run: mdbook build docs-site
 
+      - name: Prepare combined site
+        run: |
+          # Create output directory
+          mkdir -p _site
+
+          # Copy website to root
+          cp -r website/* _site/
+
+          # Copy docs to /docs subfolder
+          mkdir -p _site/docs
+          cp -r docs-site/book/* _site/docs/
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'docs-site/book'
+          path: '_site'
 
   deploy:
     environment:
