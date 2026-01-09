@@ -10,6 +10,8 @@
   },
   "scripts": {
     "build": "pnpm -r build",
+    "build:site": "node scripts/build-site.mjs",
+    "build:docs": "mdbook build docs-site",
     "test": "pnpm -r test",
     "test:coverage": "pnpm -r test:coverage",
     "lint": "eslint . --ext .ts,.tsx",

@@ -6,6 +6,7 @@ node_modules/
 dist/
 build/
 *.tsbuildinfo
+docs-site/book/
 
 # IDE
 .idea/
