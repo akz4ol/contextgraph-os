@@ -76,6 +76,9 @@ ContextGraph OS provides the foundational infrastructure for building AI agent s
 | `@contextgraph/rbac` | Role-Based Access Control with built-in roles and permission checking |
 | `@contextgraph/compliance` | Compliance reporting (audit, access, decisions) and GDPR features |
 | `@contextgraph/telemetry` | OpenTelemetry-compatible tracing, metrics, and structured logging |
+| `@contextgraph/viz` | Visualization renderers (DOT/Graphviz, Mermaid, D3.js, SVG) |
+| `@contextgraph/reasoning` | Semantic reasoning with inference rules and contradiction detection |
+| `@contextgraph/recommendations` | Decision recommendations based on historical precedents |
 | `@contextgraph/sdk` | Unified high-level SDK for ContextGraph OS |
 | `@contextgraph/api` | REST API server with Express, authentication, and rate limiting |
 | `@contextgraph/cli` | CLI tools, formatters, inspector, and interactive REPL |
@@ -608,7 +611,7 @@ pnpm --filter @contextgraph/sdk test
 pnpm --filter @contextgraph/demos test
 ```
 
-**Test Coverage:** 646 tests across 19 packages
+**Test Coverage:** 825 tests across 22 packages
 
 ## Project Status
 
@@ -635,6 +638,9 @@ pnpm --filter @contextgraph/demos test
 | E15c | ✅ | Policy Templates & Simulation |
 | E15d | ✅ | Agent Hierarchies & Delegation |
 | E16a | ✅ | OpenTelemetry Integration |
+| E16b | ✅ | Visualization (DOT, Mermaid, D3, SVG) |
+| E16c | ✅ | Semantic Reasoning & Contradiction Detection |
+| E16d | ✅ | Decision Recommendations |
 
 ## License
 

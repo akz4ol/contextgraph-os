@@ -340,6 +340,44 @@ importers:
         specifier: ^1.6.0
         version: 1.6.1(@types/node@20.19.27)
 
+  packages/reasoning:
+    dependencies:
+      '@contextgraph/ckg':
+        specifier: workspace:*
+        version: link:../ckg
+      '@contextgraph/core':
+        specifier: workspace:*
+        version: link:../core
+      '@contextgraph/storage':
+        specifier: workspace:*
+        version: link:../storage
+    devDependencies:
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.27)
+
+  packages/recommendations:
+    dependencies:
+      '@contextgraph/core':
+        specifier: workspace:*
+        version: link:../core
+      '@contextgraph/dtg':
+        specifier: workspace:*
+        version: link:../dtg
+      '@contextgraph/storage':
+        specifier: workspace:*
+        version: link:../storage
+    devDependencies:
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.27)
+
   packages/retrieval:
     dependencies:
       '@contextgraph/agent':
@@ -438,6 +476,31 @@ importers:
     devDependencies:
       typescript:
         specifier: ^5.7.2
+        version: 5.9.3
+      vitest:
+        specifier: ^1.6.0
+        version: 1.6.1(@types/node@20.19.27)
+
+  packages/viz:
+    dependencies:
+      '@contextgraph/ckg':
+        specifier: workspace:*
+        version: link:../ckg
+      '@contextgraph/core':
+        specifier: workspace:*
+        version: link:../core
+      '@contextgraph/dtg':
+        specifier: workspace:*
+        version: link:../dtg
+      '@contextgraph/provenance':
+        specifier: workspace:*
+        version: link:../provenance
+    devDependencies:
+      '@contextgraph/storage':
+        specifier: workspace:*
+        version: link:../storage
+      typescript:
+        specifier: ^5.3.3
         version: 5.9.3
       vitest:
         specifier: ^1.6.0

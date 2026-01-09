@@ -1,0 +1,40 @@
+{
+  "name": "@contextgraph/recommendations",
+  "version": "0.1.0",
+  "description": "Decision recommendations for ContextGraph OS",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run --config vitest.config.ts",
+    "test:watch": "vitest --config vitest.config.ts",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@contextgraph/core": "workspace:*",
+    "@contextgraph/dtg": "workspace:*",
+    "@contextgraph/storage": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anthropics/contextgraph-os.git",
+    "directory": "packages/recommendations"
+  }
+}
