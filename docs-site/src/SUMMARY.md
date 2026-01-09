@@ -69,6 +69,14 @@
 - [SDK API](./api/sdk.md)
 - [REST API Reference](./api/rest.md)
 
+# Architecture Deep Dive
+
+- [Enterprise Deployment](./architecture/enterprise-deployment.md)
+- [Governance Deep Dive](./architecture/governance.md)
+- [Decision Trace Graph](./architecture/decision-trace.md)
+- [Policy Configuration](./architecture/policy-configuration.md)
+- [Compliance Reporting](./architecture/compliance-reporting.md)
+
 ---
 
 [Contributing](./contributing.md)

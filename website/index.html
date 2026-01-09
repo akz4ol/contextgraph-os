@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ContextGraph OS - The governance spine for auditable AI agents. Provenance-first, time-aware, decision-traceable substrate for enterprise AI.">
+    <meta name="keywords" content="AI governance, auditable AI, AI agents, provenance, decision trace, enterprise AI, compliance, GDPR, SOC2">
+    <meta name="author" content="ContextGraph">
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://contextgraph.dev/">
+    <meta property="og:title" content="ContextGraph OS - Governance Spine for Auditable AI Agents">
+    <meta property="og:description" content="Build AI agents you can actually trust. Full provenance, policy enforcement, and decision traces for every action.">
+    <meta property="og:image" content="https://contextgraph.dev/assets/images/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://contextgraph.dev/">
+    <meta property="twitter:title" content="ContextGraph OS - Governance Spine for Auditable AI Agents">
+    <meta property="twitter:description" content="Build AI agents you can actually trust. Full provenance, policy enforcement, and decision traces for every action.">
+
+    <title>ContextGraph OS - Governance Spine for Auditable AI Agents</title>
+
+    <link rel="canonical" href="https://contextgraph.dev/">
+    <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <svg class="logo-icon" width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="16" cy="16" r="6" fill="currentColor"/>
+                    <line x1="16" y1="2" x2="16" y2="10" stroke="currentColor" stroke-width="2"/>
+                    <line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/>
+                    <line x1="2" y1="16" x2="10" y2="16" stroke="currentColor" stroke-width="2"/>
+                    <line x1="22" y1="16" x2="30" y2="16" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>ContextGraph OS</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#architecture">Architecture</a>
+                <a href="#demo">Demo</a>
+                <a href="#pricing">Pricing</a>
+                <a href="https://akz4ol.github.io/contextgraph-os/" target="_blank">Docs</a>
+                <a href="https://github.com/akz4ol/contextgraph-os" target="_blank" class="nav-github">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+            </div>
+            <button class="nav-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="hero-grid"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    Open Source Governance Framework
+                </div>
+                <h1 class="hero-title">
+                    The Governance Spine for<br>
+                    <span class="gradient-text">Auditable AI Agents</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Build AI agents your compliance team will love. Full provenance tracking,
+                    policy enforcement, and decision traces for every action.
+                </p>
+                <div class="hero-cta">
+                    <a href="#demo" class="btn btn-primary">
+                        See It In Action
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                    <a href="https://akz4ol.github.io/contextgraph-os/getting-started/quick-start.html" class="btn btn-secondary">
+                        Quick Start
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-value">22</span>
+                        <span class="stat-label">Packages</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">825+</span>
+                        <span class="stat-label">Tests</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">100%</span>
+                        <span class="stat-label">TypeScript</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="code-window">
+                    <div class="code-header">
+                        <span class="code-dot red"></span>
+                        <span class="code-dot yellow"></span>
+                        <span class="code-dot green"></span>
+                        <span class="code-title">agent.ts</span>
+                    </div>
+                    <pre class="code-content"><code><span class="code-keyword">import</span> { ContextGraph } <span class="code-keyword">from</span> <span class="code-string">'@contextgraph/sdk'</span>;
+
+<span class="code-keyword">const</span> cg = <span class="code-keyword">new</span> <span class="code-function">ContextGraph</span>();
+
+<span class="code-comment">// Every claim requires provenance</span>
+<span class="code-keyword">await</span> cg.<span class="code-function">addClaim</span>({
+  entity: <span class="code-string">'report_q4'</span>,
+  attribute: <span class="code-string">'status'</span>,
+  value: <span class="code-string">'verified'</span>,
+  source: { type: <span class="code-string">'analyst'</span>, id: <span class="code-string">'user_123'</span> },
+  confidence: <span class="code-number">0.95</span>,
+  validFrom: <span class="code-function">now</span>()
+});
+
+<span class="code-comment">// Policy-evaluated decisions</span>
+<span class="code-keyword">const</span> decision = <span class="code-keyword">await</span> cg.<span class="code-function">proposeDecision</span>({
+  type: <span class="code-string">'publish_report'</span>,
+  target: <span class="code-string">'external'</span>,
+  evidence: [claim.id]
+});
+
+<span class="code-comment">// decision.status: 'approved' | 'needs_review'</span></code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Section -->
+    <section class="problem" id="problem">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">The Problem</h2>
+                <p class="section-subtitle">AI agents are everywhere. Audit trails are nowhere.</p>
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 8v4M12 16h.01"/>
+                        </svg>
+                    </div>
+                    <h3>Black Box Decisions</h3>
+                    <p>Agent made a bad call? Good luck figuring out why. No trace, no evidence, no accountability.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M12 8v4M12 16h.01"/>
+                        </svg>
+                    </div>
+                    <h3>Compliance Nightmares</h3>
+                    <p>Auditor asks "show me every decision this agent made in Q3." You: *sweating*</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0110 0v4"/>
+                        </svg>
+                    </div>
+                    <h3>No Guardrails</h3>
+                    <p>Agent has access to everything. Policies exist in a wiki somewhere. Hope it reads that wiki.</p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <h3>Time Blindness</h3>
+                    <p>"What did we know when we made that decision?" Nobody knows. Data is overwritten daily.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="solution" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">The Solution</h2>
+                <p class="section-subtitle">A governance substrate that makes auditability automatic.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card featured">
+                    <div class="feature-number">01</div>
+                    <h3>Provenance First</h3>
+                    <p>Every piece of data requires a source. No orphan facts. Every claim is traceable to its origin.</p>
+                    <div class="feature-code">
+                        <code>source: { type: 'api', id: 'crm_v2', timestamp: now() }</code>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">02</div>
+                    <h3>Time as First-Class Citizen</h3>
+                    <p>All data is temporally qualified. Ask "what did we know on March 15?" and get an answer.</p>
+                    <div class="feature-code">
+                        <code>validFrom: '2024-01-01', validUntil: '2024-12-31'</code>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">03</div>
+                    <h3>Decisions as Data</h3>
+                    <p>Every decision is recorded before execution. Full lifecycle: proposed, approved, executed, completed.</p>
+                    <div class="feature-code">
+                        <code>status: 'proposed' | 'approved' | 'executed'</code>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">04</div>
+                    <h3>Policy Enforcement</h3>
+                    <p>Deny-first policy evaluation. No action proceeds without explicit authorization.</p>
+                    <div class="feature-code">
+                        <code>effect: 'deny', unless: { role: 'admin' }</code>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">05</div>
+                    <h3>Human-in-the-Loop</h3>
+                    <p>High-risk decisions queue for human review. Approval workflows built-in.</p>
+                    <div class="feature-code">
+                        <code>requiresApproval: risk.level >= 'HIGH'</code>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-number">06</div>
+                    <h3>Compliance Ready</h3>
+                    <p>Generate audit reports on demand. SOC 2, GDPR, HIPAA evidence packages.</p>
+                    <div class="feature-code">
+                        <code>reporter.generateSOC2({ period: 'Q4' })</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="architecture" id="architecture">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Architecture</h2>
+                <p class="section-subtitle">Four planes. Zero black boxes.</p>
+            </div>
+            <div class="arch-diagram">
+                <div class="arch-layer">
+                    <div class="arch-label">Cognition Plane</div>
+                    <div class="arch-boxes">
+                        <div class="arch-box agent">LangChain</div>
+                        <div class="arch-box agent">AutoGen</div>
+                        <div class="arch-box agent">Custom Agents</div>
+                    </div>
+                    <div class="arch-desc">Where agents think</div>
+                </div>
+                <div class="arch-arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12l7 7 7-7"/>
+                    </svg>
+                    <span>Action Intents</span>
+                </div>
+                <div class="arch-layer highlight">
+                    <div class="arch-label">ContextGraph OS</div>
+                    <div class="arch-boxes">
+                        <div class="arch-box core">Knowledge Graph</div>
+                        <div class="arch-box core">Policy Engine</div>
+                        <div class="arch-box core">Decision Trace</div>
+                    </div>
+                    <div class="arch-boxes">
+                        <div class="arch-box support">Provenance</div>
+                        <div class="arch-box support">Exceptions</div>
+                        <div class="arch-box support">Telemetry</div>
+                    </div>
+                    <div class="arch-desc">Where governance happens</div>
+                </div>
+                <div class="arch-arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12l7 7 7-7"/>
+                    </svg>
+                    <span>Controlled Execution</span>
+                </div>
+                <div class="arch-layer">
+                    <div class="arch-label">Execution Plane</div>
+                    <div class="arch-boxes">
+                        <div class="arch-box exec">APIs</div>
+                        <div class="arch-box exec">Databases</div>
+                        <div class="arch-box exec">External Services</div>
+                    </div>
+                    <div class="arch-desc">Where actions happen</div>
+                </div>
+            </div>
+            <div class="arch-principle">
+                <blockquote>
+                    "No agent action is valid unless it is context-justified, policy-evaluated, and decision-traceable."
+                </blockquote>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="demo" id="demo">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">See It In Action</h2>
+                <p class="section-subtitle">Interactive demos showing real governance scenarios.</p>
+            </div>
+            <div class="demo-tabs">
+                <button class="demo-tab active" data-demo="regulated">Regulated Agent</button>
+                <button class="demo-tab" data-demo="temporal">Time Travel Query</button>
+                <button class="demo-tab" data-demo="audit">Audit Report</button>
+            </div>
+            <div class="demo-content">
+                <div class="demo-panel active" id="demo-regulated">
+                    <div class="demo-description">
+                        <h3>Policy-Controlled Publication</h3>
+                        <p>Watch how a high-risk action is caught by policy, queued for human review, and then executed after approval.</p>
+                        <ol class="demo-steps">
+                            <li><span class="step-num">1</span> Agent proposes publishing a report to external audience</li>
+                            <li><span class="step-num">2</span> Policy engine evaluates: risk=HIGH, requires approval</li>
+                            <li><span class="step-num">3</span> Decision enters human review queue</li>
+                            <li><span class="step-num">4</span> Compliance officer approves with justification</li>
+                            <li><span class="step-num">5</span> Action executes, full trace recorded</li>
+                        </ol>
+                    </div>
+                    <div class="demo-terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-dot red"></span>
+                            <span class="terminal-dot yellow"></span>
+                            <span class="terminal-dot green"></span>
+                            <span class="terminal-title">contextgraph-demo</span>
+                        </div>
+                        <div class="terminal-body" id="terminal-regulated">
+                            <div class="terminal-line">
+                                <span class="prompt">$</span>
+                                <span class="command">npx @contextgraph/cli demo regulated-agent</span>
+                            </div>
+                        </div>
+                        <button class="demo-run-btn" onclick="runDemo('regulated')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                            Run Demo
+                        </button>
+                    </div>
+                </div>
+                <div class="demo-panel" id="demo-temporal">
+                    <div class="demo-description">
+                        <h3>Point-in-Time Queries</h3>
+                        <p>Query what the system knew at any point in time. Essential for "why did we make that decision?" questions.</p>
+                        <ol class="demo-steps">
+                            <li><span class="step-num">1</span> Data changes over time (status: draft -> reviewed -> published)</li>
+                            <li><span class="step-num">2</span> Query as of March 15: status = "reviewed"</li>
+                            <li><span class="step-num">3</span> Query as of March 20: status = "published"</li>
+                            <li><span class="step-num">4</span> Full history preserved, never overwritten</li>
+                        </ol>
+                    </div>
+                    <div class="demo-terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-dot red"></span>
+                            <span class="terminal-dot yellow"></span>
+                            <span class="terminal-dot green"></span>
+                            <span class="terminal-title">contextgraph-demo</span>
+                        </div>
+                        <div class="terminal-body" id="terminal-temporal">
+                            <div class="terminal-line">
+                                <span class="prompt">$</span>
+                                <span class="command">npx @contextgraph/cli demo temporal-query</span>
+                            </div>
+                        </div>
+                        <button class="demo-run-btn" onclick="runDemo('temporal')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                            Run Demo
+                        </button>
+                    </div>
+                </div>
+                <div class="demo-panel" id="demo-audit">
+                    <div class="demo-description">
+                        <h3>Compliance Report Generation</h3>
+                        <p>Generate audit-ready reports with one command. All decisions, evidence, and provenance included.</p>
+                        <ol class="demo-steps">
+                            <li><span class="step-num">1</span> Specify time range and report type</li>
+                            <li><span class="step-num">2</span> System aggregates all decisions</li>
+                            <li><span class="step-num">3</span> Links evidence and provenance</li>
+                            <li><span class="step-num">4</span> Exports to JSON/PDF/CSV</li>
+                        </ol>
+                    </div>
+                    <div class="demo-terminal">
+                        <div class="terminal-header">
+                            <span class="terminal-dot red"></span>
+                            <span class="terminal-dot yellow"></span>
+                            <span class="terminal-dot green"></span>
+                            <span class="terminal-title">contextgraph-demo</span>
+                        </div>
+                        <div class="terminal-body" id="terminal-audit">
+                            <div class="terminal-line">
+                                <span class="prompt">$</span>
+                                <span class="command">npx @contextgraph/cli demo audit-report</span>
+                            </div>
+                        </div>
+                        <button class="demo-run-btn" onclick="runDemo('audit')">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                            Run Demo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who It's For Section -->
+    <section class="audience">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Who It's For</h2>
+                <p class="section-subtitle">Built for teams who can't afford black-box AI.</p>
+            </div>
+            <div class="audience-grid">
+                <div class="audience-card">
+                    <div class="audience-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>Regulated Industries</h3>
+                    <p>Finance, healthcare, legal. When the auditor asks, you'll have answers.</p>
+                    <ul class="audience-tags">
+                        <li>SOC 2</li>
+                        <li>HIPAA</li>
+                        <li>GDPR</li>
+                    </ul>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </div>
+                    <h3>Enterprise AI Teams</h3>
+                    <p>Building internal agents? Make them audit-ready from day one.</p>
+                    <ul class="audience-tags">
+                        <li>LangChain</li>
+                        <li>AutoGen</li>
+                        <li>Custom</li>
+                    </ul>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>AI Platform Teams</h3>
+                    <p>Building agent platforms for others? Give them governance for free.</p>
+                    <ul class="audience-tags">
+                        <li>Multi-tenant</li>
+                        <li>White-label</li>
+                        <li>API-first</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Pricing</h2>
+                <p class="section-subtitle">Start free. Scale with confidence.</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Open Source</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">$0</span>
+                            <span class="price-period">forever</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Full ContextGraph OS
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            All 22 packages
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Community support
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            AGPL-3.0 license
+                        </li>
+                    </ul>
+                    <a href="https://github.com/akz4ol/contextgraph-os" class="btn btn-outline">
+                        Get Started
+                    </a>
+                </div>
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3>Team</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">$499</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Everything in Open Source
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Commercial license
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Priority support
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Up to 10 agents
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Hosted dashboard
+                        </li>
+                    </ul>
+                    <a href="mailto:contact@contextgraph.dev" class="btn btn-primary">
+                        Contact Sales
+                    </a>
+                </div>
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>Enterprise</h3>
+                        <div class="pricing-price">
+                            <span class="price-amount">Custom</span>
+                        </div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Everything in Team
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Unlimited agents
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Self-hosted option
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Dedicated support
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Custom integrations
+                        </li>
+                        <li>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            SLA & compliance
+                        </li>
+                    </ul>
+                    <a href="mailto:enterprise@contextgraph.dev" class="btn btn-outline">
+                        Talk to Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">FAQ</h2>
+                <p class="section-subtitle">Common questions about ContextGraph OS.</p>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Is this another agent framework?</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>No. ContextGraph OS is a <strong>governance substrate</strong> that sits between your agent framework (LangChain, AutoGen, etc.) and actual execution. It doesn't replace your agents; it makes them auditable.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Does it add latency to agent actions?</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Minimal. Policy evaluation is in-memory and typically adds &lt;10ms. For high-risk actions that require human approval, yes there's latency - but that's the point. You want someone to review before the agent deletes your production database.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What databases are supported?</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Currently SQLite (embedded) and an in-memory adapter for testing. PostgreSQL adapter is on the roadmap. The storage layer is abstracted, so adding new backends is straightforward.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Can I use it with my existing agents?</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes. The SDK provides a simple API. Your agent submits "action intents" instead of executing directly. ContextGraph evaluates policies, records the decision, and either allows execution or queues for review.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What's the license?</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Dual-licensed: <strong>AGPL-3.0</strong> for open source use, and a commercial license for proprietary applications. If you're building internal tools or open source, AGPL is free. If you're building a SaaS product, you'll need a commercial license.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>How does it compare to [other tool]?</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"/>
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>ContextGraph OS is unique in its focus on <strong>governance as a first-class concern</strong>. Other tools might have logging or monitoring. We have provenance, temporal data, policy enforcement, decision traces, and compliance reporting baked in at every layer.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to make your AI agents auditable?</h2>
+                <p>Get started in minutes. Build trust with every decision.</p>
+                <div class="cta-buttons">
+                    <a href="https://akz4ol.github.io/contextgraph-os/getting-started/quick-start.html" class="btn btn-primary btn-lg">
+                        Read the Docs
+                    </a>
+                    <a href="https://github.com/akz4ol/contextgraph-os" class="btn btn-secondary btn-lg">
+                        Star on GitHub
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="/" class="footer-logo">
+                        <svg class="logo-icon" width="24" height="24" viewBox="0 0 32 32" fill="none">
+                            <circle cx="16" cy="16" r="14" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="16" cy="16" r="6" fill="currentColor"/>
+                            <line x1="16" y1="2" x2="16" y2="10" stroke="currentColor" stroke-width="2"/>
+                            <line x1="16" y1="22" x2="16" y2="30" stroke="currentColor" stroke-width="2"/>
+                            <line x1="2" y1="16" x2="10" y2="16" stroke="currentColor" stroke-width="2"/>
+                            <line x1="22" y1="16" x2="30" y2="16" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>ContextGraph OS</span>
+                    </a>
+                    <p>The governance spine for auditable AI agents.</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#architecture">Architecture</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="https://akz4ol.github.io/contextgraph-os/">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="https://akz4ol.github.io/contextgraph-os/getting-started/quick-start.html">Quick Start</a></li>
+                        <li><a href="https://akz4ol.github.io/contextgraph-os/tutorials/auditable-agent.html">Tutorials</a></li>
+                        <li><a href="https://akz4ol.github.io/contextgraph-os/api/rest.html">API Reference</a></li>
+                        <li><a href="https://akz4ol.github.io/contextgraph-os/changelog.html">Changelog</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="https://github.com/akz4ol/contextgraph-os">GitHub</a></li>
+                        <li><a href="mailto:contact@contextgraph.dev">Contact</a></li>
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 ContextGraph. Open source under AGPL-3.0.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
