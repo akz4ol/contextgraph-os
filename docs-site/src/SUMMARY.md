@@ -77,6 +77,10 @@
 - [Policy Configuration](./architecture/policy-configuration.md)
 - [Compliance Reporting](./architecture/compliance-reporting.md)
 
+# Commercial
+
+- [Hosted Architecture](./commercial/hosted-architecture.md)
+
 ---
 
 [Contributing](./contributing.md)
