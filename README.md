@@ -84,6 +84,16 @@ ContextGraph OS provides the foundational infrastructure for building AI agent s
 | `@contextgraph/cli` | CLI tools, formatters, inspector, and interactive REPL |
 | `@contextgraph/demos` | Demo examples and integration tests |
 
+## Documentation
+
+Detailed documentation for advanced packages:
+
+| Package | Documentation |
+|---------|---------------|
+| `@contextgraph/viz` | [Visualization Guide](./docs/packages/viz.md) - DOT, Mermaid, D3.js, SVG renderers |
+| `@contextgraph/reasoning` | [Reasoning Guide](./docs/packages/reasoning.md) - Semantic inference & contradiction detection |
+| `@contextgraph/recommendations` | [Recommendations Guide](./docs/packages/recommendations.md) - Decision precedents & risk assessment |
+
 ## Installation
 
 ```bash
