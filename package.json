@@ -1,6 +1,6 @@
 {
   "name": "contextgraph-os",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Provenance-first, time-aware, decision-trace substrate for auditable AI agents",
   "type": "module",
